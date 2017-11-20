@@ -18,7 +18,8 @@
     "grunt-browserify": "^5.2.0",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-nodeunit": "^1.0.0",
-    "grunt-contrib-uglify": "^3.1.0"
+    "grunt-contrib-uglify": "^3.1.0",
+    "grunt-contrib-watch": "^1.0.0"
   },
   "dependencies": {
     "bignumber.js": "^4.0.2",

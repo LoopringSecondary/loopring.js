@@ -11,13 +11,59 @@ module.exports = function(grunt) {
                 src: 'src/<%= pkg.name %>.js',
                 dest: 'build/<%= pkg.name %>.min.js'
             }
+        },
+
+        browserify: {
+            options: {
+                // transform: [require("ethereumjs-util")]
+            },
+            dev: {
+                options: {
+                    // Add source maps
+                    browserifyOptions: {
+                        debug: true
+                    }
+                },
+                src: ['src/**/*.js'],
+                dest: 'build/loopring.js'
+            },
+
+            dist: {
+                options: {
+                    browserifyOptions: {
+                        debug: false
+                    }
+                },
+                src: '<%= browserify.dev.src %>',
+                dest: '<%= browserify.dev.dest %>',
+            }
+        },
+
+        uglify: {
+            options: {
+                mangle: false,
+                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                    '<%= grunt.template.today("yyyy-mm-dd") %> */'
+            },
+            my_target: {
+                files: {
+                    'build/loopring.min.js': ['build/loopring.js']
+                }
+            }
+        },
+
+        watch: {
+            files: ['gruntfile.js', 'src/**/*.js'],
+            tasks: ['browserify:dev']
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-browserify');
 
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['browserify:dev', 'watch']);
+    grunt.registerTask('dist', ['browserify:dist', 'uglify']);
 
 };
