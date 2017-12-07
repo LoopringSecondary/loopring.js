@@ -274,16 +274,18 @@ function relay(host)
         return new BigNumber(Number(await this.call(params, tag)));
     };
 
-
-    this.getCutOff = async(add,contractVersion) =>
+    this.getCutOff = async(add, contractVersion, tag) =>
     {
-
         if (!validataor.isValidETHAddress(add))
         {
             throw new Error('invalid ETH address' + add);
         }
-
-        request.id =  id();
+        tag = tag || 'latest';
+        if (tag !== 'latest' && tag !== 'earliest' && tag !== 'pending')
+        {
+            throw new Error('invalid  tag:' + tag);
+        }
+        request.id = id();
         request.method = 'loopring_getCutoff';
         request.params = [add, contractVersion];
 
@@ -296,8 +298,8 @@ function relay(host)
             data: request
         }).then(r => r.data).then(res =>
     {
-        return res;
-    });
+            return res;
+        });
     };
     this.getTokenAllowance = async(token, owner, spender, tag) =>
 {
