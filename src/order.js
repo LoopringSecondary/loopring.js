@@ -19,7 +19,7 @@
 const signer = require('./signer.js');
 const ethUtil = require('ethereumjs-util');
 const BigNumber = require('bignumber.js');
-const ajv = require('ajv');
+const Ajv = require('ajv');
 const _ = require('lodash');
 
 function Order(data)
@@ -40,6 +40,8 @@ function Order(data)
     let v = data.v;
     let r = data.r;
     let s = data.s;
+
+    const ajv = new Ajv();
 
     const orderSchema = {
         'title': 'Order',
