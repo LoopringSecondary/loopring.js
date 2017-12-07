@@ -18,7 +18,6 @@
 
 const signer = require('./signer.js');
 const ethUtil = require('ethereumjs-util');
-const BigNumber = require('bignumber.js');
 const BN = require('bn.js');
 const Ajv = require('ajv');
 const _ = require('lodash');
