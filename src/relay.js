@@ -274,6 +274,31 @@ function relay(host)
         return new BigNumber(Number(await this.call(params, tag)));
     };
 
+
+    this.getCutOff = async(add,contractVersion) =>
+    {
+
+        if (!validataor.isValidETHAddress(add))
+        {
+            throw new Error('invalid ETH address' + add);
+        }
+
+        request.id =  id();
+        request.method = 'loopring_getCutoff';
+        request.params = [add, contractVersion];
+
+        return axios({
+            url: host,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: request
+        }).then(r => r.data).then(res =>
+    {
+        return res;
+    });
+    };
     this.getTokenAllowance = async(token, owner, spender, tag) =>
 {
         if (!validataor.isValidETHAddress(owner))
