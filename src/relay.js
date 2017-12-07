@@ -338,7 +338,7 @@ function relay(host)
     this.getOrders = async function (filter)
 {
         request.method = 'loopring_getOrders';
-        request.params = [{ filter }];
+        request.params = [filter];
         request.id = id();
 
         return axios({
@@ -357,7 +357,7 @@ function relay(host)
     this.getDepth = async function (filter)
 {
         request.method = 'loopring_getDepth';
-        request.params = [{ filter }];
+        request.params = [ filter ];
         request.id = id();
 
         return axios({
@@ -376,7 +376,7 @@ function relay(host)
     this.getTicker = async function (market)
 {
         request.method = 'loopring_getTicker';
-        request.params = [{ market }];
+        request.params = [market];
         request.id = id();
 
         return axios({
@@ -396,7 +396,7 @@ function relay(host)
 {
         // filter:market, address, pageIndex, pageSize,contractVersion
         request.method = 'loopring_getFills';
-        request.params = [{ filter }];
+        request.params = [filter];
         request.id = id();
 
         return axios({
@@ -412,11 +412,11 @@ function relay(host)
         });
     };
 
-    this.getCandleTicks = async function (filter)
+    this.getTrend = async function (market)
 {
-        // filter:market, interval, size
-        request.method = 'loorping_getCandleTicks';
-        request.params = [{ filter }];
+        // filter:market
+        request.method = 'loopring_getTrend';
+        request.params = [market];
         request.id = id();
 
         return axios({
@@ -436,7 +436,7 @@ function relay(host)
 {
         // filter:ringHash, orderHash, miner, pageIndex, pageSize,contractVersion
         request.method = 'loopring_getRingMined';
-        request.params = [{ filter }];
+        request.params = [filter];
         request.id = id();
 
         return axios({
@@ -454,7 +454,7 @@ function relay(host)
 
     this.getBalances = async function (address)
 {
-        request.method = 'loopring_getBalances';
+        request.method = 'loopring_getBalance';
         request.params = [{ address }];
         request.id = id();
 
