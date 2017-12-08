@@ -479,10 +479,10 @@ function relay (host)
         });
     };
 
-    this.getBalances = async (address) =>
+    this.getBalances = async (owner, contractVersion) =>
     {
         request.method = 'loopring_getBalance';
-        request.params = [{ address }];
+        request.params = [{owner, contractVersion}];
         request.id = id();
 
         return axios({
