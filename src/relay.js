@@ -498,6 +498,25 @@ function relay (host)
         });
     };
 
+    this.getPriceQuote = async (currency) =>
+    {
+        request.method = 'loopring_getPriceQuote';
+        request.params = [currency];
+        request.id = id();
+
+        return axios({
+            url: host,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: request
+        }).then(r => r.data).then(res =>
+        {
+            return res;
+        });
+    };
+
     const id = () =>
     {
         return crypto.randomBytes(16).toString('hex');
