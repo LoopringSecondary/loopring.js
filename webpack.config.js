@@ -46,7 +46,7 @@ module.exports = {
         })
     ],
     externals: {
-        'web3‘： ’web3',
+        'web3': 'web3',
         'axios': 'axios',
         'bignumber.js': 'BigNumber',
         'bn.js': 'BN',
