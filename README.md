@@ -11,6 +11,7 @@ You need to install [npm](https://www.npmjs.com/get-npm), [yarn](https://yarnpkg
 Then run the following commands from project's root directory:
  
 ```
+npm install --global typechain
 yarn install
 ```
 
