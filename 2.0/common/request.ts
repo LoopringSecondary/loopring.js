@@ -20,6 +20,10 @@ function ifResHasErr(res){
 
 
 function request(url, options) {
+  if(options.body){
+    options.body.id = '1';
+    options.body = JSON.stringify(options.body);
+  }
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)

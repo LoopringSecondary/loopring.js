@@ -1,51 +1,54 @@
 
-import * as types from './types';
-import * as apis from '../common/apis';
+import {baseTx,signedTx,Tag,AbiMethod} from './types';
+import * as apis from './apis';
 import * as abis from '../common/abis';
 import EthTransaction from 'ethereumjs-tx';
 
 export default class Transaction {
 
-	tx = {}; // TODO type
+  public tx = {}; 
 
-  constructor(tx) { // TODO type
-    super(); 
+  constructor(tx:baseTx) { 
+    super();
+    // TODO: type validator 
     this.tx = tx;
   }
 
-  public setData(payload){
-    this.tx.data = abis.getAbiData(payload);
+  public setData({method:AbiMethod,timestamp,amount,address}){
+    // TODO: type vlidator
+    this.tx.data = abis.getAbiData({method,timestamp,amount,address});
     return this.tx;
   }
 
-  public async setNonce(payload){
-  	this.tx.nonce = await apis.getTransactionCount(payload);
-  	return this.tx;
+  public async setNonce({add:string,tag:Tag}){
+    // TODO:type vlidator
+    this.tx.nonce = await apis.getTransactionCount({add,tag});
+    return this.tx;
   }
 
-  private setSigned(payload){
-  	let privateKey; // TODO type
-  	const ethTx = new EthTransaction(this.tx);
-  	ethTx.sign(privateKey);
-  	this.tx.signed = '0x' + ethTx.serialize().toString('hex');
-  	return this.tx;
+  private setSigned({privateKey}){
+    // TODO: type vlidator
+    const ethTx = new EthTransaction(this.tx);
+    ethTx.sign(privateKey);
+    this.tx.signed = '0x' + ethTx.serialize().toString('hex');
+    return this.tx;
   }
 
   public async send(payload){
-  	return apis.sendRawTransaction(this.tx);
+    // TODO: type vlidator
+    return apis.sendRawTransaction(this.tx);
   }
 
   public sign(payload){
-  	this.setSigned(payload);
-  	return this.tx;
+    return this.setSigned(payload);;
   }
 
   static async batchSend(){
-  	// TODO
+    // TODO
   }
 
   static async batchSign(){
-  	// TODO
+    // TODO
   }
 
 }

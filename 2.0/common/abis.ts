@@ -1,10 +1,6 @@
 
 import abi from 'ethereumjs-abi';
-
-
-export default getAbiData = (payload)=>{
-    // TODO
-}
+import {AbiMethod} from '../transaction/types';
 
 export solSHA3 = (types, data) =>
 {
@@ -85,3 +81,28 @@ export generateAllowanceData = (owner, spender) =>
     const data = abi.rawEncode(['address', 'address'], [owner, spender]).toString('hex');
     return '0x' + method + data;
 };
+
+export default getAbiData = ({method,timestamp,address,amount})=>{
+    // TODO validator
+    switch (method) {
+        case 'setCutoff':
+            generateCutOffData(timestamp);
+            break;
+        case 'approve':
+            generateApproveData(address, amount);
+            break;
+        case 'withdraw':
+            generateWithdrawData(amount);
+            break;
+        case 'transfer':
+            generateTransferData(address, amount);
+            break;
+        case 'balanceOf':
+            generateBalanceOfData(address);
+            break;
+        case 'allowance':
+            generateAllowanceData(owner, spender);
+            break;
+    }
+    
+}
