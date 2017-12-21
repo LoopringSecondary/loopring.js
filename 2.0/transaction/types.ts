@@ -10,22 +10,19 @@ export type PRIVATE_KEY_STRING = string;
 
 
 export interface BaseTx {
-  from: ADDRESS;  
   to: ADDRESS;    
   value: QUANTITY;
   gasLimit: QUANTITY;  
-  gasPrice: QUANTITY;  
+  gasPrice: QUANTITY;
   chainId: number;
-  data?: string;
 }
+
 export interface RawTx extends BaseTx {
+  data: string;
   nonce: string;
 }
+
 export interface SignedTx extends RawTx {
-  raw: string;
   signed: HEX;
 }
-
-
-
 
