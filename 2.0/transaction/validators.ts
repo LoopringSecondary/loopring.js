@@ -1,6 +1,31 @@
 
 const ethereumUtil = require('ethereumjs-util');
 
+
+
+// =========== types ===========
+// 
+// ADDRESS
+// HEX
+// PRIVATE_KEY
+// RPC_TAG
+// TIMESTAMP
+// QUANTITY
+// ABI_METHOD -- abi.js
+// 
+// =========== interfaces of transactions ===========
+// 
+// BaseTx
+// RawTx
+// SignedTx
+// 
+// =========== interfaces of transactions ===========
+// 
+// ORDER  -- abis.js
+// 
+// =========== end ========
+
+
 let validators = {}
 
 validators.ADDRESS = (address)=>{
@@ -49,7 +74,13 @@ validators.validate = (payload,callback)=>{
 
   let {type,value}= paylaod;
   let validator = validators[type];
-  let result = validator(value);
+  let result;
+
+  if(!validator){
+    result = true; // if no validator, to be validated default 
+  }else{
+    result = validator(value);
+  }
 
   if(!result){
     if(callback){

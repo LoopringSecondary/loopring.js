@@ -7,7 +7,7 @@ let headers = {
     'Content-Type': 'application/json'
 };
 
-export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}){
+export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}):Promise{
   validate({value:add,type:'ADDRESS',})
   validate({value:tag,type:'RPC_TAG',})
 

@@ -23,8 +23,7 @@ export default class Transaction {
     this.tx.nonce = await apis.getTransactionCount(payload);
     return this.tx;
   }
-
-  private setSigned({privateKey:PRIVATE_KEY}){
+  public setSigned({privateKey:PRIVATE_KEY}){
     validate({value:privateKey,type:'PRIVATE_KEY'})
     
     const ethTx = new EthTransaction(this.tx);

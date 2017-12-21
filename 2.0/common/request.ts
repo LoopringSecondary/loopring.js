@@ -13,7 +13,7 @@ function parseJSON(res) {
 
 function ifResHasErr(res){
   if (res.error){
-      throw new Error(res.error.message);
+      throw new Error('res error: '+res.error.message);
   }
   return res;
 }
@@ -21,7 +21,7 @@ function ifResHasErr(res){
 
 function request(url, options) {
   if(options.body){
-    options.body.id = '1';
+    options.body.id = '1'; // TODO ?
     options.body = JSON.stringify(options.body);
   }
   return fetch(url, options)
