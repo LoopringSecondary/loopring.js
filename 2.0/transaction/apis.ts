@@ -1,12 +1,16 @@
 import request from '../common/request';
+import {validate} from './validators';
+import {ADDRESS,RPC_TAG,SIGNED_TX_HEX} from './types';
+
 
 let headers = {
     'Content-Type': 'application/json'
 };
 
+export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}){
+  validate({value:add,type:'ADDRESS',})
+  validate({value:tag,type:'RPC_TAG',})
 
-export async function getTransactionCount({add:string,tag:string}){
-  // TODO:type vlidator
   let body = {};
   body.method = 'eth_getTransactionCount';
   body.params = [add,tag];
@@ -17,8 +21,9 @@ export async function getTransactionCount({add:string,tag:string}){
   });
 }
 
-export async function sendRawTransaction({tx:SIGNED_HEX}){
-    // TODO:type vlidator
+export async function sendRawTransaction({tx:HEX}){
+    validate({value:tx,type:'HEX',})
+    
     let body = {};
     body.method = 'eth_sendRawTransaction';
     body.params = [tx];

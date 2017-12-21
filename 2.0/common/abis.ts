@@ -1,6 +1,5 @@
 
 import abi from 'ethereumjs-abi';
-import {AbiMethod} from '../transaction/types';
 
 export solSHA3 = (types, data) =>
 {
