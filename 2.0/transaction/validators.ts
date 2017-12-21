@@ -1,7 +1,5 @@
 
-const ethereumUtil = require('ethereumjs-util');
-
-
+import ethereumUtil from 'ethereumjs-util' ;
 
 // =========== types ===========
 // 
@@ -54,13 +52,20 @@ validators.HEX = (str)=>{
 }
 
 
-validators.PRIVATE_KEY = (privateKey) =>
+validators.PRIVATE_KEY_STRING = (privateKey) =>
 {
     if (typeof privateKey === 'string')
     {
         return privateKey.length === 64;
     }
-    else if (privateKey instanceof Buffer)
+    else
+    {
+        return false;
+    }
+};
+validators.PRIVATE_KEY_BUFFER = (privateKey) =>
+{
+    if (privateKey instanceof Buffer)
     {
         return privateKey.length === 32;
     }
@@ -69,6 +74,7 @@ validators.PRIVATE_KEY = (privateKey) =>
         return false;
     }
 };
+
 
 validators.validate = (payload,callback)=>{
 

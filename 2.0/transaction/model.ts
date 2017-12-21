@@ -2,34 +2,34 @@ import EthTransaction from 'ethereumjs-tx';
 import * as apis from './apis';
 import * as abis from '../common/abis';
 import {validate} from './validators';
-import {baseTx,signedTx,Tag,AbiMethod} from './types';
+import {baseTx,signedTx,PRIVATE_KEY_BUFFER} from './types';
 
 export default class Transaction {
 
-  public tx = {}; 
+  public tx = {
+
+  }; 
 
   constructor(tx:baseTx) { 
     super();
     // TODO: type validator 
     this.tx = tx;
   }
-
+  public getTx(){
+    return this.tx;
+  }
   public setData(payload){
     this.tx.data = abis.getAbiData(payload);
-    return this.tx;
   }
-
   public async setNonce(payload){
     this.tx.nonce = await apis.getTransactionCount(payload);
-    return this.tx;
   }
-  public setSigned({privateKey:PRIVATE_KEY}){
-    validate({value:privateKey,type:'PRIVATE_KEY'})
+  public setSigned({privateKey:PRIVATE_KEY_BUFFER}){
+    validate({value:privateKey,type:'PRIVATE_KEY_BUFFER'})
     
     const ethTx = new EthTransaction(this.tx);
     ethTx.sign(privateKey);
     this.tx.signed = '0x' + ethTx.serialize().toString('hex');
-    return this.tx;
   }
 
   public async send(){

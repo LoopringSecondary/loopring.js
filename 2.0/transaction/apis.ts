@@ -1,6 +1,6 @@
 import request from '../common/request';
 import {validate} from './validators';
-import {ADDRESS,RPC_TAG,SIGNED_TX_HEX} from './types';
+import {ADDRESS,RPC_TAG,HEX} from './types';
 
 
 let headers = {
