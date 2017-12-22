@@ -22,12 +22,12 @@ export default class Transaction {
   }
 
   public async setNonce(add:ADDRESS,tag:RPC_TAG){
+    validator.validate({value:add,type:'ADDRESS'})
     this.tx.nonce = await apis.getTransactionCount(add,tag)
   }
 
   public sign(privateKey:Buffer){
     validator.validate({value:privateKey,type:'PRIVATE_KEY'})
-    
     const ethTx = new EthTransaction(this.tx)
     ethTx.sign(privateKey)
     this.tx.signed = '0x' + ethTx.serialize().toString('hex')

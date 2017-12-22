@@ -5,33 +5,33 @@ import {ADDRESS,RPC_TAG,HEX} from './types'
 let headers = {
     'Content-Type': 'application/json'
 };
-const HOST = 'http://127.0.0.1';
+const HOST = 'http://127.0.0.1'
 
 export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise<any>{
   validator.validate({value:add,type:'ADDRESS',})
 
-  let body = <any>{};
-  body.method = 'eth_getTransactionCount';
-  body.params = [add,tag];
+  let body = <any>{}
+  body.method = 'eth_getTransactionCount'
+  body.params = [add,tag]
   return request(`${HOST}`,{
     method:'post',
     headers,
     body,
-  });
+  })
 }
 
 export async function sendRawTransaction(tx:HEX):Promise<any>{
     validator.validate({value:tx,type:'HEX',})
     
-    let body = <any>{};
-    body.method = 'eth_sendRawTransaction';
-    body.params = [tx];
+    let body = <any>{}
+    body.method = 'eth_sendRawTransaction'
+    body.params = [tx]
     return request(`${HOST}`,{
       method:'post',
       headers,
       body,
-    });
-};
+    })
+}
 
 
 
