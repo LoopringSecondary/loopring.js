@@ -20,7 +20,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const Path = require('path');
 
 module.exports = {
-    entry: './src/loopring.js',
+    entry: './2.0/index.ts',
     resolve: {
         modules: [
             'bower_components',
@@ -50,5 +50,8 @@ module.exports = {
         'bignumber.js': 'BigNumber',
         'bn.js': 'BN',
         lodash: '_'
-    }
+    },
+    loaders: [
+      { test: /\.ts$/, loader: 'ts-loader' }
+    ]
 };

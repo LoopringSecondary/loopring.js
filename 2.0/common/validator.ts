@@ -16,7 +16,7 @@ let handleErrors = (errors, fields)=>{
 
 let validate = (payload)=>{
   // TODO: Custom Validator, Custom rules?
-  let {type,value,onError,onSuccess}= paylaod
+  let {type,value,onError,onSuccess}= payload
   let source = {}
   let schema = {}
 
@@ -40,7 +40,7 @@ let validate = (payload)=>{
       }
     }else{
       if(onSuccess){
-        onSuccese()
+        onSuccess()
       }
     }
   })
@@ -48,4 +48,4 @@ let validate = (payload)=>{
 
 export default {
   validate
-};
+}

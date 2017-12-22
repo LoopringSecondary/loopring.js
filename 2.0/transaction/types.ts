@@ -5,8 +5,6 @@ export type ABI_METHOD = 'cancelOrder' | 'setCutoff' | 'approve' | 'withdraw' | 
 export type ADDRESS = string;
 export type QUANTITY = string;
 export type HEX = string;
-export type PRIVATE_KEY_BUFFER = Buffer;
-export type PRIVATE_KEY_STRING = string;
 
 
 export interface BaseTx {

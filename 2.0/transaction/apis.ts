@@ -1,13 +1,14 @@
 import request from '../common/request'
-import {validate} from '../common/validators'
+import validator from '../common/validator'
 import {ADDRESS,RPC_TAG,HEX} from './types'
 
 let headers = {
     'Content-Type': 'application/json'
 };
+const HOST = 'http://127.0.0.1';
 
-export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}):Promise{
-  validate({value:add,type:'ADDRESS',})
+export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise{
+  validator.validate({value:add,type:'ADDRESS',})
 
   let body = {};
   body.method = 'eth_getTransactionCount';
@@ -19,8 +20,8 @@ export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}):Promise{
   });
 }
 
-export async function sendRawTransaction({tx:HEX}){
-    validate({value:tx,type:'HEX',})
+export async function sendRawTransaction(tx:HEX){
+    validator.validate({value:tx,type:'HEX',})
     
     let body = {};
     body.method = 'eth_sendRawTransaction';

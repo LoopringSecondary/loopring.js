@@ -1,4 +1,4 @@
-import fetch from 'fetch';
+import fetch from 'isomorphic-fetch';
 
 
 function checkStatus(res) {
@@ -11,7 +11,7 @@ function parseJSON(res) {
   return res.json();
 }
 
-function ifResHasErr(res){
+function ifResHasError(res){
   if (res.error){
       throw new Error('res error: '+res.error.message);
   }

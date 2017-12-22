@@ -16,19 +16,14 @@ let basicSchemas = {
 		pattern:/111/g,
 		validator:()=>{}
 	},
-	PRIVATE_KEY_BUFFER:{
-		type:'string',
-		pattern:/111/g,
-		validator:()=>{}
-	},
-	PRIVATE_KEY_STRING:{
+	PRIVATE_KEY:{
 		type:'string',
 		pattern:/111/g,
 		validator:()=>{}
 	},
 }
 
-let StandSchemas = {
+let standSchemas = {
 	TX:{
 		to:{
 			...basicSchemas.ADDRESS

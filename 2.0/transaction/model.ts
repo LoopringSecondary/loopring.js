@@ -1,16 +1,15 @@
 import EthTransaction from 'ethereumjs-tx'
 import * as abis from '../common/abis'
-import {validate} from '../common/validators'
+import validator from '../common/validator'
 import * as apis from './apis'
-import {BaseTx,RawTx,SignedTx,PRIVATE_KEY_BUFFER} from './types'
+import {BaseTx,RawTx,SignedTx,RPC_TAG,ADDRESS} from './types'
 
 export default class Transaction {
 
   public tx = {} 
 
   constructor(tx:BaseTx) { 
-    validate({value:tx,type:'TX'})
-    super()
+    validator.validate({value:tx,type:'TX'})
     this.tx = tx
   }
   public getTx(){
@@ -19,11 +18,11 @@ export default class Transaction {
   public setData(payload){
     this.tx.data = abis.getAbiData(payload)
   }
-  public async setNonce(payload){
-    this.tx.nonce = await apis.getTransactionCount(payload)
+  public async setNonce(add:ADDRESS,tag:RPC_TAG){
+    this.tx.nonce = await apis.getTransactionCount(add,tag)
   }
-  public sign({privateKey:PRIVATE_KEY_BUFFER}){
-    validate({value:privateKey,type:'PRIVATE_KEY_BUFFER'})
+  public sign(privateKey:Buffer){
+    validator.validate({value:privateKey,type:'PRIVATE_KEY'})
     
     const ethTx = new EthTransaction(this.tx)
     ethTx.sign(privateKey)
