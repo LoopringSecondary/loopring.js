@@ -6,18 +6,25 @@
 
 You need to install [npm](https://www.npmjs.com/get-npm), [yarn](https://yarnpkg.com/lang/en/docs/cli/install/), and [webpack](https://github.com/webpack/webpack).
 
-## Compile
-
 Then run the following commands from project's root directory:
  
 ```
 yarn install
+// or
+
+npm install
 ```
 
-To build the dist directory from the src director run the following:
+## Develop
 
 ```
-webpack
+npm run start
+```
+
+## Build
+
+```
+npm run build
 ```
 
 ## Browser Usage

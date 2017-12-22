@@ -20,17 +20,20 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const Path = require('path');
 
 module.exports = {
+    devtool: 'inline-source-map',
     entry: './2.0/index.ts',
     resolve: {
         modules: [
             'bower_components',
             'node_modules'
-        ]
+        ],
+        // Add `.ts` and `.tsx` as a resolvable extension.
+        extensions: ['.ts', '.tsx', '.js']
     },
     output: {
         path: Path.join(__dirname, '/dist'),
-        library: 'loopring',
-        libraryTarget: 'umd',
+        // library: 'loopring',
+        // libraryTarget: 'umd',
         filename: 'loopring.min.js'
     },
     plugins: [

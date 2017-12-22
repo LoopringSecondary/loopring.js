@@ -1,5 +1,4 @@
-
-import Transaction from '../2.0/transaction'
+import Transaction from './transaction';
 
 export default {
   Transaction

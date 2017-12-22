@@ -6,7 +6,6 @@ export type ADDRESS = string;
 export type QUANTITY = string;
 export type HEX = string;
 
-
 export interface BaseTx {
   to: ADDRESS    
   value: QUANTITY
