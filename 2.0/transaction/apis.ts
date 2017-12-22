@@ -7,10 +7,10 @@ let headers = {
 };
 const HOST = 'http://127.0.0.1';
 
-export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise{
+export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise<any>{
   validator.validate({value:add,type:'ADDRESS',})
 
-  let body = {};
+  let body = <any>{};
   body.method = 'eth_getTransactionCount';
   body.params = [add,tag];
   return request(`${HOST}`,{
@@ -20,10 +20,10 @@ export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise{
   });
 }
 
-export async function sendRawTransaction(tx:HEX){
+export async function sendRawTransaction(tx:HEX):Promise<any>{
     validator.validate({value:tx,type:'HEX',})
     
-    let body = {};
+    let body = <any>{};
     body.method = 'eth_sendRawTransaction';
     body.params = [tx];
     return request(`${HOST}`,{

@@ -97,7 +97,7 @@ let generateAllowanceData = (owner, spender) =>
     return '0x' + method + data;
 };
 
-export default getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
+let getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
     validator.validate({value:'method',type:'ABI_METHOD'})
     switch (method) {
         case 'cancelOrder':
@@ -121,5 +121,8 @@ export default getAbiData = ({method,timestamp,address,amount,order,owner,spende
             generateAllowanceData(owner, spender);
             break;
     }
-    
+}
+
+export default {
+    getAbiData
 }
