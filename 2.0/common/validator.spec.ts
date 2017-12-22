@@ -54,4 +54,13 @@ schema.validate({
   console.log(fields);
 });
 
+
+
+describe('validator', () => {
+    it('validator heeeeeeelllllllo', () => {
+        expect(true).toBe(true);
+        expect(true).toBe(true);
+    });
+})
+
 console.log('end');

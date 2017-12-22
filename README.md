@@ -27,6 +27,13 @@ npm run start
 npm run build
 ```
 
+
+## Test
+
+```
+npm run build
+```
+
 ## Browser Usage
 
 To save on space in the library, and allow for dependencies to be concurrently loaded by a browser, we have removed the following libraries (they will need to be installed via bower):
