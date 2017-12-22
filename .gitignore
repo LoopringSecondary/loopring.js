@@ -69,3 +69,6 @@ typings/
 
 # dist
 dist
+
+# test
+tests/build

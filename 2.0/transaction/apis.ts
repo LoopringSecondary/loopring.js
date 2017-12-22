@@ -5,7 +5,7 @@ import {ADDRESS,RPC_TAG,HEX} from './types'
 let headers = {
     'Content-Type': 'application/json'
 };
-const HOST = 'http://127.0.0.1'
+const HOST = 'https://relay1.loopring.io/rpc'
 
 export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise<any>{
   validator.validate({value:add,type:'ADDRESS',})

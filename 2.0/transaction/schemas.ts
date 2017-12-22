@@ -3,24 +3,35 @@
 let basicSchemas = {
 	ADDRESS:{
 		type:'string',
-		pattern:/111/g,
-		validator:()=>{}
+		pattern:/^0x[0-9a-fA-F]{1,64}$/g,
 	},
 	HEX:{
 		type:'hex',
-		pattern:/111/g,
-		validator:()=>{}
 	},
 	QUANTITY:{
 		type:'string',
-		pattern:/111/g,
-		validator:()=>{}
 	},
 	PRIVATE_KEY:{
 		type:'string',
-		pattern:/111/g,
-		validator:()=>{}
+		validator:(pk)=>{
+			if (typeof pk === 'string')
+			{
+			    return pk.length === 64;
+			}
+			else if (pk instanceof Buffer)
+			{
+			    return pk.length === 32;
+			}
+			else
+			{
+			    return false;
+			}
+		}
 	},
+	TIMESTAMP:{
+		type:'string',
+	},
+
 }
 
 let standSchemas = {

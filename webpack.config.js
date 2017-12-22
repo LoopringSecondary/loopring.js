@@ -59,5 +59,11 @@ module.exports = {
           // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
           { test: /\.tsx?$/, loader: 'ts-loader' }
         ]
-      }
+    },
+    devServer: {
+      contentBase: Path.join(__dirname, "dist/"),
+      compress: true,
+      port: 3000,
+      hot: true
+    }
 };
