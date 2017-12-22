@@ -1,7 +1,7 @@
 import EthTransaction from 'ethereumjs-tx'
-import * as apis from './apis'
 import * as abis from '../common/abis'
-import {validate} from './validators'
+import {validate} from '../common/validators'
+import * as apis from './apis'
 import {BaseTx,RawTx,SignedTx,PRIVATE_KEY_BUFFER} from './types'
 
 export default class Transaction {
@@ -9,8 +9,8 @@ export default class Transaction {
   public tx = {} 
 
   constructor(tx:BaseTx) { 
+    validate({value:tx,type:'TX'})
     super()
-    validate({value:tx,type:'BaseTx'})
     this.tx = tx
   }
   public getTx(){

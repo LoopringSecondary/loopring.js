@@ -1,95 +1,72 @@
 
-import ethereumUtil from 'ethereumjs-util' 
-
-// =========== types ===========
-// 
-// ADDRESS
-// HEX
-// PRIVATE_KEY
-// RPC_TAG
-// TIMESTAMP
-// QUANTITY
-// ABI_METHOD -- abi.js
-// 
-// =========== interfaces of transactions ===========
-// 
-// BaseTx
-// RawTx
-// SignedTx
-// 
-// =========== interfaces of transactions ===========
-// 
-// ORDER  -- abis.js
-// 
-// =========== end ========
-
-
-let common_types = [
-	{
-		type:'ADDRESS',
-		rules:{
-			type:'string',
-			regexp:/111/g,
-		}
+// TODO: required rule
+let basicSchemas = {
+	ADDRESS:{
+		type:'string',
+		pattern:/111/g,
+		validator:()=>{}
 	},
-	{
-		type:'HEX',
-		rules:{
-			type:'string',
-			regexp:/111/g,
-		}
+	HEX:{
+		type:'hex',
+		pattern:/111/g,
+		validator:()=>{}
 	},
-	{
-		type:'QUANTITY',
-		rules:{
-			type:'string',
-			regexp:/111/g,
-		}
+	QUANTITY:{
+		type:'string',
+		pattern:/111/g,
+		validator:()=>{}
 	},
-	{
-		type:'PRIVATE_KEY_BUFFER',
-		rules:{
-			type:'string',
-			regexp:/111/g,
-		}
+	PRIVATE_KEY_BUFFER:{
+		type:'string',
+		pattern:/111/g,
+		validator:()=>{}
 	},
-	{
-		type:'PRIVATE_KEY_STRING',
-		rules:{
-			type:'string',
-			regexp:/111/g,
-		}
+	PRIVATE_KEY_STRING:{
+		type:'string',
+		pattern:/111/g,
+		validator:()=>{}
 	},
-]
-
-
-let schemaTransformer = (schema={})=>{
-	let keys = Object.keys(schema);
-	keys.forEach(key=>{
-		let field = schema[key];
-		let common_field = common_types.find(item=>item.type === field.type);
-		let new_field = {
-			...field,
-			rules:[
-				...common_field.rules,
-				...field.rules,
-			]
-		}
-		schema[key] = new_field;
-	})
 }
 
-let txSchema = schemaTransformer(
-	{
-		to:{type:'ADDRESS'};    
-		value:{type:'QUANTITY'};
-		gasLimit:{type:'QUANTITY'};  
-		gasPrice:{type:'QUANTITY'};
-		chainId:{type:'number'};
-		nonce:{type:'string'};
-		data:{type:'string'};
-		signed:{type:'string'};
-	}
-)
+let StandSchemas = {
+	TX:{
+		to:{
+			...basicSchemas.ADDRESS
+		},    
+		value:{
+			...basicSchemas.QUANTITY
+		},
+		gasLimit:{
+			...basicSchemas.QUANTITY
+		},  
+		gasPrice:{
+			...basicSchemas.QUANTITY
+		},
+		chainId:{
+			type:'string',
+		},
+		nonce:{
+			type:'string'
+		},
+		data:{
+			type:'string'
+		},
+		signed:{
+			type:'string'
+		},
+	},
+}
+
+export default {
+	basic:basicSchemas,
+	stand:standSchemas,
+}
+
+
+
+
+
+
+
 
 

@@ -1,7 +1,6 @@
-import request from '../common/request';
-import {validate} from './validators';
-import {ADDRESS,RPC_TAG,HEX} from './types';
-
+import request from '../common/request'
+import {validate} from '../common/validators'
+import {ADDRESS,RPC_TAG,HEX} from './types'
 
 let headers = {
     'Content-Type': 'application/json'
@@ -9,7 +8,6 @@ let headers = {
 
 export async function getTransactionCount({add:ADDRESS,tag:RPC_TAG}):Promise{
   validate({value:add,type:'ADDRESS',})
-  validate({value:tag,type:'RPC_TAG',})
 
   let body = {};
   body.method = 'eth_getTransactionCount';
