@@ -12,7 +12,7 @@ const schemas = {
 
 let handleErrors = (errors, fields)=>{
   let msgs = errors.map(err=>err.message).join()
-  throw new Error(`data type invalid: ${msgs}`)
+  throw new Error(`data type invalid: ${msgs} \n`)
 }
 
 let validate = (payload)=>{
@@ -21,8 +21,8 @@ let validate = (payload)=>{
   let schema = {}
 
   // fix bug: if value undefined or null
-  if(typeof value == 'undefined'){ throw new Error(`data type invalid: ${type} should not be undefined`) }
-  if(value == null){ throw new Error(`data type invalid: ${type} should not be null`) }
+  if(typeof value === 'undefined'){ throw new Error(`data type invalid: ${type} should not be undefined`) }
+  if(value === null){ throw new Error(`data type invalid: ${type} should not be null`) }
 
   if(schemas['basic'][type]){
     // validate one field , schema & source must just has one field
@@ -37,11 +37,10 @@ let validate = (payload)=>{
 
   // TODO: if schema empty
   let validator = new Schema(schema)
-  console.log('validate start source',source)
-  console.log('validate start schema',schema)
   validator.validate(source,(errors, fields) => {
-    console.log('validate end')
     if(errors){
+      console.log('validate start source',source)
+      console.log('validate start schema',schema)
       if(onError){
         onError(errors, fields)
       }else{

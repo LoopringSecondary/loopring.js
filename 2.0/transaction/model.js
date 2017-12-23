@@ -32,10 +32,12 @@ export default class Transaction {
     const ethTx = new EthTransaction(this.tx)
     ethTx.sign(privateKey)
     this.tx.signed = '0x' + ethTx.serialize().toString('hex')
+    // this.tx.signed = '0x11111'
   }
 
   async send(){
-    return apis.sendRawTransaction(this.tx.signed)
+    // return Promise <txHash>
+    return apis.sendRawTransaction(this.tx.signed) 
   }
 
   static async batchSend(){

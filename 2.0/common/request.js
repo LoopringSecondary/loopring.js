@@ -6,19 +6,9 @@ function checkStatus(res) {
   return res;
 }
 
-
 function parseJSON(res) {
   return res.json();
 }
-
-function ifResHasError(res){
-  if (res.error){
-      console.log('res',res)
-      throw new Error('res error: '+ res.error.message)
-  }
-  return res;
-}
-
 
 function request(url, options) {
   if(options.body){
@@ -28,7 +18,13 @@ function request(url, options) {
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
-    .then(ifResHasError)
+    .then(res=>{
+      console.log('res',res)
+      if (res.error){
+          throw new Error('res error: '+ res.error.message)
+      }
+      return res.result;
+    })
     // .catch(error=>{
     //   throw new Error(error)
     // })

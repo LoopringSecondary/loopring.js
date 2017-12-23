@@ -98,28 +98,22 @@ export const generateAllowanceData = (owner, spender) =>
 };
 
 export const getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
-    validator.validate({value:'method',type:'ABI_METHOD'})
+    validator.validate({value:method,type:'ABI_METHOD'})
     switch (method) {
         case 'cancelOrder':
-            generateCancelOrderData(order);
+            return generateCancelOrderData(order);
         case 'setCutoff':
-            generateCutOffData(timestamp);
-            break;
+            return generateCutOffData(timestamp);
         case 'approve':
-            generateApproveData(address, amount);
-            break;
+            return generateApproveData(address, amount);
         case 'withdraw':
-            generateWithdrawData(amount);
-            break;
+            return generateWithdrawData(amount);
         case 'transfer':
-            generateTransferData(address, amount);
-            break;
+            return generateTransferData(address, amount);
         case 'balanceOf':
             generateBalanceOfData(address);
-            break;
         case 'allowance':
-            generateAllowanceData(owner, spender);
-            break;
+            return generateAllowanceData(owner, spender);
     }
 }
 

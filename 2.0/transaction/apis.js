@@ -20,12 +20,12 @@ export async function getTransactionCount(add,tag){
   })
 }
 
-export async function sendRawTransaction(txHex){
-    validator.validate({value:txHex,type:'HEX',})
+export async function sendRawTransaction(signedTx){
+    validator.validate({value:signedTx,type:'HEX',})
     
     let body = {}
     body.method = 'eth_sendRawTransaction'
-    body.params = [txHex]
+    body.params = [signedTx]
     return request(`${HOST}`,{
       method:'post',
       headers,
