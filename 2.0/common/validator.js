@@ -12,13 +12,17 @@ const schemas = {
 
 let handleErrors = (errors, fields)=>{
   let msgs = errors.map(err=>err.message).join()
-  throw new Error(`validate data type failed: ${msgs}`)
+  throw new Error(`data type invalid: ${msgs}`)
 }
 
 let validate = (payload)=>{
   let {type,value,onError,onSuccess}= payload
   let source = {}
   let schema = {}
+
+  // fix bug: if value undefined or null
+  if(typeof value == 'undefined'){ throw new Error(`data type invalid: ${type} should not be undefined`) }
+  if(value == null){ throw new Error(`data type invalid: ${type} should not be null`) }
 
   if(schemas['basic'][type]){
     // validate one field , schema & source must just has one field

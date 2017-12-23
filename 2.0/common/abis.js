@@ -1,13 +1,13 @@
 import abi from 'ethereumjs-abi';
 import validator from '../common/validator'
 
-let solSHA3 = (types, data) =>
+export const solSHA3 = (types, data) =>
 {
     const hash = abi.soliditySHA3(types, data);
     return hash;
 };
 
-let generateCancelOrderData = (order) =>
+export const generateCancelOrderData = (order) =>
 {
     // TODO order type
     const data = abi.rawEncode([
@@ -40,7 +40,7 @@ let generateCancelOrderData = (order) =>
     return '0x' + method + data;
 };
 
-let generateCutOffData = (timestamp) =>
+export const generateCutOffData = (timestamp) =>
 {
     validator.validate({value:timestamp,type:'TIMESTAMP'});
 
@@ -49,7 +49,7 @@ let generateCutOffData = (timestamp) =>
     return '0x' + method + data;
 };
 
-let generateApproveData = (address, amount) =>
+export const generateApproveData = (address, amount) =>
 {
     validator.validate({value:address,type:'ADDRESS'});
     validator.validate({value:amount,type:'QUANTITY'});
@@ -59,7 +59,7 @@ let generateApproveData = (address, amount) =>
     return '0x' + method + data;
 };
 
-let generateWithdrawData = (amount) =>
+export const generateWithdrawData = (amount) =>
 {
     validator.validate({value:amount,type:'QUANTITY'});
 
@@ -68,7 +68,7 @@ let generateWithdrawData = (amount) =>
     return '0x' + method + data;
 };
 
-let generateTransferData = (address, amount) =>
+export const generateTransferData = (address, amount) =>
 {
     validator.validate({value:address,type:'ADDRESS'});
     validator.validate({value:amount,type:'QUANTITY'});
@@ -78,7 +78,7 @@ let generateTransferData = (address, amount) =>
     return '0x' + method + data;
 };
 
-let generateBalanceOfData = (address) =>
+export const generateBalanceOfData = (address) =>
 {
     validator.validate({value:address,type:'ADDRESS'});
 
@@ -87,7 +87,7 @@ let generateBalanceOfData = (address) =>
     return '0x' + method + data;
 };
 
-let generateAllowanceData = (owner, spender) =>
+export const generateAllowanceData = (owner, spender) =>
 {
     validator.validate({value:owner,type:'ADDRESS'});
     validator.validate({value:spender,type:'ADDRESS'});
@@ -97,7 +97,7 @@ let generateAllowanceData = (owner, spender) =>
     return '0x' + method + data;
 };
 
-let getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
+export const getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
     validator.validate({value:'method',type:'ABI_METHOD'})
     switch (method) {
         case 'cancelOrder':
@@ -124,5 +124,5 @@ let getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
 }
 
 export default {
-    getAbiData
+    getAbiData,
 }

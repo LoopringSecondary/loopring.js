@@ -23,6 +23,7 @@ export default class Transaction {
 
   async setNonce(add,tag){
     validator.validate({value:add,type:'ADDRESS'})
+    validator.validate({value:tag,type:'RPC_TAG'})
     this.tx.nonce = await apis.getTransactionCount(add,tag)
   }
 

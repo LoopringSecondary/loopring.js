@@ -1,6 +1,6 @@
 
 // Schema Help： https://github.com/yiminghe/async-validator
-// required: not empty eg: null, undefined, ''
+// required: value should be not empty eg: null, undefined, ''
 
 let basicSchemas ={
 	ADDRESS:{
@@ -15,12 +15,25 @@ let basicSchemas ={
 	},
 	QUANTITY:{
 		type:'string',
-		required:true, 
+		required:true,
 	},
 	PRIVATE_KEY:{
 		type:'string',
 		required:true, 
 		length:64,
+	},
+	ABI_METHOD:{
+		type:'enum',
+		required:true, 
+		enum:['cancelOrder','setCutoff','approve','withdraw','transfer','balanceOf','allowance'],
+	},
+	RPC_TAG:{
+		type:'enum',
+		required:true,
+		enum:['latest' | 'earliest' | 'pending'],
+	},
+	TIMESTAMP:{
+		type:'string',
 	},
 	PRIVATE_KEY_BUFFER:{
 		validator:(rule,value,cb)=>{
@@ -31,9 +44,6 @@ let basicSchemas ={
 			}
 		}
 	},
-	TIMESTAMP:{
-		type:'string',
-	}
 }
 
 let standSchemas = {
