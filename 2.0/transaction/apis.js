@@ -8,7 +8,7 @@ let headers = {
 const HOST = 'https://relay1.loopring.io/rpc'
 
 export async function getTransactionCount(add,tag){
-  validator.validate({value:add,type:'ADDRESS',})
+  validator.validate({value:add,type:'ADDRESS'})
 
   let body = {}
   body.method = 'eth_getTransactionCount'
@@ -20,12 +20,12 @@ export async function getTransactionCount(add,tag){
   })
 }
 
-export async function sendRawTransaction(tx){
-    validator.validate({value:tx,type:'HEX',})
+export async function sendRawTransaction(txHex){
+    validator.validate({value:txHex,type:'HEX',})
     
     let body = {}
     body.method = 'eth_sendRawTransaction'
-    body.params = [tx]
+    body.params = [txHex]
     return request(`${HOST}`,{
       method:'post',
       headers,

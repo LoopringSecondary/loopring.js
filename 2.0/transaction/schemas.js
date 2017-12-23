@@ -1,18 +1,25 @@
 
+// Schema Help： https://github.com/yiminghe/async-validator
+// required: not empty eg: null, undefined, ''
+
 let basicSchemas ={
 	ADDRESS:{
 		type:'string',
+		required:true, 
 		pattern:/^0x[0-9a-fA-F]{1,64}$/g,
 	},
 	HEX:{
 		type:'hex',
-		// length:64,
+		required:true, 
+		pattern:/^0x[0-9a-fA-F]+$/g,
 	},
 	QUANTITY:{
 		type:'string',
+		required:true, 
 	},
 	PRIVATE_KEY:{
 		type:'string',
+		required:true, 
 		length:64,
 	},
 	PRIVATE_KEY_BUFFER:{

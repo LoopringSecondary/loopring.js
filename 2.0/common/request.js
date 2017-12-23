@@ -13,7 +13,8 @@ function parseJSON(res) {
 
 function ifResHasError(res){
   if (res.error){
-      throw new Error('res error: '+res.error.message);
+      console.log('res',res)
+      throw new Error('res error: '+ res.error.message)
   }
   return res;
 }
@@ -28,6 +29,9 @@ function request(url, options) {
     .then(checkStatus)
     .then(parseJSON)
     .then(ifResHasError)
+    // .catch(error=>{
+    //   throw new Error(error)
+    // })
 }
 
 
