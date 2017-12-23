@@ -1,37 +1,32 @@
 
-// TODO: required rule
-let basicSchemas = {
+let basicSchemas ={
 	ADDRESS:{
 		type:'string',
 		pattern:/^0x[0-9a-fA-F]{1,64}$/g,
 	},
 	HEX:{
 		type:'hex',
+		// length:64,
 	},
 	QUANTITY:{
 		type:'string',
 	},
 	PRIVATE_KEY:{
 		type:'string',
-		validator:(pk)=>{
-			if (typeof pk === 'string')
-			{
-			    return pk.length === 64;
-			}
-			else if (pk instanceof Buffer)
-			{
-			    return pk.length === 32;
-			}
-			else
-			{
-			    return false;
+		length:64,
+	},
+	PRIVATE_KEY_BUFFER:{
+		validator:(rule,value,cb)=>{
+			if (value instanceof Buffer && pk.length === 32){
+			    cb()
+			}else{
+					cb('private_key must be buffer')
 			}
 		}
 	},
 	TIMESTAMP:{
 		type:'string',
-	},
-
+	}
 }
 
 let standSchemas = {
@@ -59,16 +54,14 @@ let standSchemas = {
 		},
 		signed:{
 			type:'string'
-		},
-	},
+		}
+	}
 }
 
 export default {
 	basic:basicSchemas,
-	stand:standSchemas,
+	stand:standSchemas
 }
-
-
 
 
 

@@ -1,16 +1,16 @@
 import request from '../common/request'
 import validator from '../common/validator'
-import {ADDRESS,RPC_TAG,HEX} from './types'
+// import {ADDRESS,RPC_TAG,HEX} from './types'
 
 let headers = {
     'Content-Type': 'application/json'
 };
 const HOST = 'https://relay1.loopring.io/rpc'
 
-export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise<any>{
+export async function getTransactionCount(add,tag){
   validator.validate({value:add,type:'ADDRESS',})
 
-  let body = <any>{}
+  let body = {}
   body.method = 'eth_getTransactionCount'
   body.params = [add,tag]
   return request(`${HOST}`,{
@@ -20,10 +20,10 @@ export async function getTransactionCount(add:ADDRESS,tag:RPC_TAG):Promise<any>{
   })
 }
 
-export async function sendRawTransaction(tx:HEX):Promise<any>{
+export async function sendRawTransaction(tx){
     validator.validate({value:tx,type:'HEX',})
     
-    let body = <any>{}
+    let body = {}
     body.method = 'eth_sendRawTransaction'
     body.params = [tx]
     return request(`${HOST}`,{

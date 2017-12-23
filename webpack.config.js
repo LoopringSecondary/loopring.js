@@ -21,7 +21,7 @@ const Path = require('path');
 
 module.exports = {
     devtool: 'inline-source-map',
-    entry: './2.0/index.ts',
+    entry: './2.0/index.js',
     resolve: {
         modules: [
             'bower_components',
@@ -57,7 +57,23 @@ module.exports = {
     module: {
         rules: [
           // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-          { test: /\.tsx?$/, loader: 'ts-loader' }
+          // { test: /\.tsx?$/, loader: 'ts-loader' }
+          { 
+            test: /\.js$/, 
+            loader: 'babel-loader',
+            exclude:/node_modules/,
+            query:{
+              presets:['es2015',"babel-preset-stage-0"]
+            }
+          },
+          { 
+            test: /\.ts$/, 
+            loader: 'babel-loader',
+            exclude:/node_modules/,
+            query:{
+              presets:['es2015',"babel-preset-stage-0"]
+            }
+          }
         ]
     },
     devServer: {
