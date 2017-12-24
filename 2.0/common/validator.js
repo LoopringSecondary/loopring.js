@@ -1,12 +1,13 @@
 import Schema from 'async-validator';
-import transaction from '../transaction/schemas';
+import basicSchemas from './validator_schemas';
+import transactionSchemas from '../transaction/schemas';
 
 const schemas = {
   basic:{
-    ...transaction.basic
+    ...basicSchemas
   },
   stand:{
-    ...transaction.stand
+    ...transactionSchemas
   }
 }
 

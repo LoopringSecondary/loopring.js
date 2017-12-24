@@ -1,5 +1,7 @@
 
 
+// TODO for typescript
+
 // export type RPC_TAG = 'latest' | 'earliest' | 'pending' ;
 // export type ABI_METHOD = 'cancelOrder' | 'setCutoff' | 'approve' | 'withdraw' | 'transfer' | 'balanceOf' | 'allowance';
 // export type ADDRESS = string;

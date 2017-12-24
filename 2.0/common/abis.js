@@ -1,5 +1,5 @@
 import abi from 'ethereumjs-abi';
-import validator from '../common/validator'
+import validator from './validator'
 
 export const solSHA3 = (types, data) =>
 {

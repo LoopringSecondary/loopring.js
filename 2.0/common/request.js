@@ -10,16 +10,28 @@ function parseJSON(res) {
   return res.json();
 }
 
-function request(url, options) {
+let checkHost = ()=>{
+  if(!LOOPRING_PROVIDER_HOST){
+    throw new Error('host is required. Do not forget: new Loopring(host)')
+  }
+}
+
+
+function request(options) {
+  checkHost()
+  let url = LOOPRING_PROVIDER_HOST 
+
+  let method
   if(options.body){
-    options.body.id = '1'; // TODO ?
-    options.body = JSON.stringify(options.body);
+    method = options.body.method
+    options.body.id = '1' // TODO ?
+    options.body = JSON.stringify(options.body)
   }
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
     .then(res=>{
-      console.log('res',res)
+      console.log(`${method} response:`,res)
       if (res.error){
           throw new Error('res error: '+ res.error.message)
       }
