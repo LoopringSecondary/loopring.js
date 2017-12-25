@@ -1,7 +1,6 @@
 
-describe('validator', () => {
-    it('validator 4', () => {
-        expect(true).toBe(true);
+describe('Module Validator', () => {
+    it('spec1', () => {
         expect(true).toBe(true);
         
     });

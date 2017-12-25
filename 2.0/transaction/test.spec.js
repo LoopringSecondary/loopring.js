@@ -1,7 +1,7 @@
 
-describe('transaction', () => {
+describe('Module Transaction', () => {
     it('transaction spec', () => {
-        expect(true).toBe(true);
+
         expect(true).toBe(true);
         
     });

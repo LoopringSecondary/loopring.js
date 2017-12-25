@@ -37,31 +37,6 @@ export async function sendRawTransaction(signedTx){
     })
 }
 
-export async function submitOrder(order){
-    validator.validate({value:order,type:'Order',})
-
-    let body = {}
-    body.method = 'loopring_submitOrder'
-    body.params = [order]
-    return request({
-      method:'post',
-      headers,
-      body,
-    })
-}
-export async function getOrders(filter){
-    // validator.validate({value:filter,type:'HEX',})
-
-    let body = {}
-    body.method = 'loopring_getOrders'
-    body.params = [filter]
-    return request({
-      method:'post',
-      headers,
-      body,
-    })
-}
-
 
 // ==================
 // Order
