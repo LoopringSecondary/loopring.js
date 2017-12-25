@@ -34,8 +34,4 @@ export default class Order {
     await tx.sign(privateKey) // TODO
     await tx.send() // TODO
   }
-  async getOrders(filter){
-    // TODO type validate
-    return apis.getOrders(filter)
-  }
 }

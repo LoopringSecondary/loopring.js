@@ -28,11 +28,11 @@ export default class Transaction {
   }
 
   sign(privateKey){
+  	// TODO type format
     validator.validate({value:privateKey,type:'PRIVATE_KEY_BUFFER'})
     const ethTx = new EthTransaction(this.tx)
     ethTx.sign(privateKey)
     this.tx.signed = '0x' + ethTx.serialize().toString('hex')
-    // this.tx.signed = '0x11111'
   }
 
   async send(){
