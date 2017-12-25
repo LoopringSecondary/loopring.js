@@ -7,34 +7,35 @@ import ethereumUtil  from 'ethereumjs-util'
 export default class Account {
   constructor(){
   }
-  create(){
-    this.privateKey = crypto.randomBytes(32)
-    this.publicKey = ethereumUtil.privateToPublic(this.privateKey)
-    this.address = ethereumUtil.publicToAddress(this.publicKey)
-    return this.getAccount()
+  static create(){
+    const privateKey = crypto.randomBytes(32)
+    const publicKey = ethereumUtil.privateToPublic(privateKey)
+    const address = ethereumUtil.publicToAddress(publicKey)
+    return {
+      privateKey,
+      publicKey,
+      address,
+    }
   }
-  encrypt(privateKey, password){
+  static encrypt(privateKey, password){
     // TODO type validate
     const keystoreJsonV3 = keystore.pkeyToKeystore(privateKey,privateKey)
     return keystoreJsonV3
   }
-  decrypt(keystoreJsonV3, password){
+  static decrypt(keystoreJsonV3, password){
     // TODO type validate
-    this.privateKey = keystore.decryptKeystoreToPkey(keystoreJsonV3,password);
-    this.publicKey = ethereumUtil.privateToPublic(this.privateKey)
-    this.address = ethereumUtil.publicToAddress(this.publicKey)
-    return this.getAccount()
-  }
-  getAddress(){
-    // TODO type format
-    return ethereumUtil.toChecksumAddress('0x' + this.address.toString('hex'))
-  }
-  getAccount(){
+    const privateKey = keystore.decryptKeystoreToPkey(keystoreJsonV3,password);
+    const publicKey = ethereumUtil.privateToPublic(privateKey)
+    const address = ethereumUtil.publicToAddress(publicKey)
     return {
-      publicKey:this.publicKey,
-      privateKey:this.privateKey,
-      address:this.address,
+      privateKey,
+      publicKey,
+      address,
     }
+  }
+  static formatAddres(address){
+    validator.validate({type:'ADDRESS',value:address})
+    return ethereumUtil.toChecksumAddress('0x' + address.toString('hex'));
   }
 }
 
