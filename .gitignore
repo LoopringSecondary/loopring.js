@@ -63,3 +63,13 @@ typings/
 .vscode/
 # Visual Studio
 .vs/
+
+# Mac
+.DS_Store
+
+# dist
+dist
+
+# test
+tests/build
+2.0/test.js

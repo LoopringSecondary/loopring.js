@@ -20,17 +20,20 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const Path = require('path');
 
 module.exports = {
-    entry: './src/loopring.js',
+    devtool: 'inline-source-map',
+    entry: './2.0/index.js',
     resolve: {
         modules: [
             'bower_components',
             'node_modules'
-        ]
+        ],
+        // Add `.ts` and `.tsx` as a resolvable extension.
+        extensions: ['.ts', '.tsx', '.js']
     },
     output: {
         path: Path.join(__dirname, '/dist'),
-        library: 'loopring',
-        libraryTarget: 'umd',
+        // library: 'loopring',
+        // libraryTarget: 'umd',
         filename: 'loopring.min.js'
     },
     plugins: [
@@ -50,5 +53,33 @@ module.exports = {
         'bignumber.js': 'BigNumber',
         'bn.js': 'BN',
         lodash: '_'
+    },
+    module: {
+        rules: [
+          // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+          // { test: /\.tsx?$/, loader: 'ts-loader' }
+          { 
+            test: /\.js$/, 
+            loader: 'babel-loader',
+            exclude:/node_modules/,
+            query:{
+              presets:['es2015',"babel-preset-stage-0"]
+            }
+          },
+          { 
+            test: /\.ts$/, 
+            loader: 'babel-loader',
+            exclude:/node_modules/,
+            query:{
+              presets:['es2015',"babel-preset-stage-0"]
+            }
+          }
+        ]
+    },
+    devServer: {
+      contentBase: Path.join(__dirname, "dist/"),
+      compress: true,
+      port: 3000,
+      hot: true
     }
 };
