@@ -1,4 +1,5 @@
 import validator from '../common/validator'
+import formatter from '../common/formatter'
 import keystore from '../common/keystore'
 import crypto  from 'crypto'
 import ethereumUtil  from 'ethereumjs-util'
@@ -33,9 +34,9 @@ export default class Account {
       address,
     }
   }
-  static formatAddres(address){
+  static formatAddress(address){
     validator.validate({type:'ADDRESS',value:address})
-    return ethereumUtil.toChecksumAddress('0x' + address.toString('hex'));
+    return formatter.format({type:'ADDRESS',value:address})
   }
 }
 
