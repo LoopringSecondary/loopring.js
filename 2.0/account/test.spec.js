@@ -1,3 +1,4 @@
+import Transaction from './index'
 
 describe('Module Account', () => {
     it('spec1', () => {

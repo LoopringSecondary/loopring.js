@@ -3,10 +3,14 @@ import formatter from '../common/formatter'
 import keystore from '../common/keystore'
 import crypto  from 'crypto'
 import ethereumUtil  from 'ethereumjs-util'
+import Transaction  from '../Transaction'
 
 
 export default class Account {
-  constructor(){
+  constructor(privateKey){
+    this.privateKey = privateKey
+    this.publicKey = ethereumUtil.privateToPublic(privateKey)
+    this.address = ethereumUtil.publicToAddress(publicKey)
   }
   static create(){
     const privateKey = crypto.randomBytes(32) // return buffer
@@ -19,19 +23,11 @@ export default class Account {
     }
   }
   static encrypt(privateKey, password){ 
-    return keystore.pkeyToKeystore(privateKey,password)
-    // return keystoreJsonV3
+    return keystore.pkeyToKeystore(privateKey,password) // keystoreJsonV3
   }
   static decrypt(keystoreJsonV3, password){
-    // TODO type validate
-    const privateKey = keystore.decryptKeystoreToPkey(keystoreJsonV3,password);
-    const publicKey = ethereumUtil.privateToPublic(privateKey)
-    const address = ethereumUtil.publicToAddress(publicKey)
-    return {
-      privateKey,
-      publicKey,
-      address,
-    }
+    const keystore.decryptKeystoreToPkey(keystoreJsonV3,password) // privateKey
+    
   }
   static download(){
     // TODO

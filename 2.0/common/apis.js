@@ -13,6 +13,7 @@ let headers = {
 
 export async function getTransactionCount(add,tag){
   validator.validate({value:add,type:'ADDRESS'})
+  validator.validate({value:tag,type:'RPC_TAG'})
   
   let body = {}
   body.method = 'eth_getTransactionCount'
