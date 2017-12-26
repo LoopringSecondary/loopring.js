@@ -68,3 +68,23 @@ export default class Order {
   //   await tx.send()
   // }
 }
+
+// this.cancel = (amount, privateKey) =>
+//     {
+//         if (!r || !v || !s)
+//         {
+//             this.sign(privateKey);
+//         }
+
+//         const order = {
+//             addresses: [owner, tokenS, tokenB],
+//             orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
+//             buyNoMoreThanAmountB,
+//             marginSplitPercentage,
+//             v,
+//             r,
+//             s
+//         };
+
+//         return signer.generateCancelOrderData(order);
+//     };

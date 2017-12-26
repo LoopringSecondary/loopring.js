@@ -37,8 +37,50 @@ export default class Transaction {
   static async batchSign(){
     // TODO
   }
-
-
-
 }
+
+  // this.generateTx = async (rawTx, privateKey) =>
+  //   {
+  //       const wallet = new Wallet();
+  //       wallet.setPrivateKey(ethUtil.toBuffer(privateKey));
+
+  //       const validResult = ajv.validate(transactionSchema, rawTx);
+
+  //       if (validResult.error)
+  //       {
+  //           throw new Error('invalid Tx data ');
+  //       }
+
+  //       const gasLimit = new BigNumber(Number(rawTx.gasLimit));
+
+  //       if (gasLimit.lessThan(21000))
+  //       {
+  //           throw new Error('gasLimit must be greater than 21000');
+  //       }
+
+  //       if (gasLimit.greaterThan(5000000))
+  //       {
+  //           throw new Error('gasLimit is too big');
+  //       }
+
+  //       const balance = await this.getAccountBalance(wallet.getAddress());
+
+  //       const needBalance = new BigNumber(rawTx.value).add(gasLimit * new BigNumber(rawTx.gasPrice));
+
+  //       if (balance.lessThan(needBalance))
+  //       {
+  //           throw new Error('Balance  is not enough');
+  //       }
+
+  //       const nonce = await this.getTransactionCount(wallet.getAddress());
+
+  //       rawTx.nonce = rawTx.nonce || nonce;
+  //       rawTx.chainId = rawTx.chainId || 1;
+
+  //       const signed = signer.signEthTx(rawTx, privateKey);
+  //       return {
+  //           tx: rawTx,
+  //           signedTx: signed
+  //       };
+  //   };
 

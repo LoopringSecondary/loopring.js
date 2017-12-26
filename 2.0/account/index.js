@@ -9,7 +9,7 @@ export default class Account {
   constructor(){
   }
   static create(){
-    const privateKey = crypto.randomBytes(32)
+    const privateKey = crypto.randomBytes(32) // return buffer
     const publicKey = ethereumUtil.privateToPublic(privateKey)
     const address = ethereumUtil.publicToAddress(publicKey)
     return {

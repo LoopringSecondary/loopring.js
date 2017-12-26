@@ -35,24 +35,28 @@ let basicSchemas ={
   TIMESTAMP:{
     type:'string',
   },
+  PRIVATE_KEY:{
+    validator:(rule,value,cb)=>{
+      // Code Convention: PRIVATE_KEY must just have two formats
+      // 1. Buffer
+      // 2. Hex : '0x'+ buffer.toString('hex') eg.
+      if (value instanceof Buffer){
+        if(value.length === 32){
+          cb()
+        }else{
+          cb('unvalid PRIVATE_KEY type: ',value)
+        }
+      }
+
+      if(typeof value === 'string'){
+        let pattern =  /^0x[0-9a-fA-F]{64}$/g
+        if(value.test(pattern)){
+          cb()
+        }else{
+          cb('unvalid PRIVATE_KEY type: ',value)
+        }
+      }
+    }
+  },
 }
-// TX_SIGNED:{
-//     type:'string',
-//     required:true, 
-//     pattern:/^0x[0-9a-fA-F]+$/g, // legnth 不定
-//   },
-//   SIGNATURE:{ //for signature
-//     type:'string',
-//     required:true, 
-//     pattern:/^0x[0-9a-fA-F]{64}$/g,
-//   },
-//   PRIVATE_KEY:{
-//     validator:(rule,value,cb)=>{
-//       if (value instanceof Buffer && pk.length === 32){
-//           cb()
-//       }else{
-//           cb('private_key must be buffer')
-//       }
-//     }
-//   },
 export default basicSchemas
