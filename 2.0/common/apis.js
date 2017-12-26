@@ -42,12 +42,13 @@ export async function sendRawTransaction(signedTx){
 // Order
 // ==================
 
-export async function submitOrder(order){
-    validator.validate({value:order,type:'Order',})
+export async function submitOrder(order_json_stringify){
+    // TODO validator
+    // validator.isJson(order_json_stringify)
 
     let body = {}
     body.method = 'loopring_submitOrder'
-    body.params = [order]
+    body.params = [order_json_stringify]
     return request({
       method:'post',
       headers,
@@ -55,7 +56,7 @@ export async function submitOrder(order){
     })
 }
 export async function getOrders(filter){
-    // validator.validate({value:filter,type:'HEX',})
+    // TODO validator
 
     let body = {}
     body.method = 'loopring_getOrders'

@@ -9,7 +9,7 @@ import ethUtil  from 'ethereumjs-util'
 
 export default class Order {
   constructor(order) { 
-    validator.validate({value:order,type:'ORDER'})
+    // TODO validator.validate({value:order,type:'ORDER'})
     this.order = order
   }
   sign(privateKey){
@@ -53,7 +53,7 @@ export default class Order {
       }
   }
   async submit(){
-    return apis.submitOrder(this.order.signed)
+    return apis.submitOrder(JSON.stringify(this.order))
   }
   // async cancel(amount, privateKey){
   //   this.sign()

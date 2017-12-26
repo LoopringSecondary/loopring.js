@@ -77,6 +77,25 @@ let isAddress = (mixed)=>{
   // TODO
 }
 
+let isJson = (str)=>{
+    try {
+        return !!JSON.parse(str)
+    } catch (e) {
+        return false
+    }
+}
+let isArray = (object)=>{
+    return Array.isArray(object)
+}
+
+let isObject = (object)=>{
+    return object !== null && !(Array.isArray(object)) && typeof object === 'object'
+}
+
+let isString = (object)=>{
+    return typeof object === 'string' || (object && object.constructor && object.constructor.name === 'String')
+}
+
 
 
 
@@ -86,4 +105,7 @@ export default {
   isBigNumber,
   isHex,
   isAddress,
+  isJson,
+  isArray,
+  isString,
 }

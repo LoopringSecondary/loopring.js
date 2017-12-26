@@ -7,9 +7,8 @@ import * as apis from '../common/apis'
 
 export default class Transaction {
   constructor(tx) { 
-    validator.validate({value:tx,type:'TX'})
+    // TODO validator.validate({value:tx,type:'TX'})
     this.tx = tx
-
   }
   getTx(){
     return this.tx
