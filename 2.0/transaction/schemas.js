@@ -6,26 +6,34 @@ let standSchemas = {
 			...basicSchemas.ADDRESS
 		},    
 		value:{
-			...basicSchemas.QUANTITY
+			...basicSchemas.QUANTITY // User Input
 		},
 		gasLimit:{
-			...basicSchemas.QUANTITY
+			...basicSchemas.QUANTITY // User Input
 		},  
 		gasPrice:{
-			...basicSchemas.QUANTITY
+			...basicSchemas.QUANTITY // User Input
 		},
 		chainId:{
-			type:'string',
+			type:'number', 
 		},
 		nonce:{
-			type:'string'
+			type:'string' // System Input
 		},
+		// v, TODO
+		// r, TODO
+		// s, TODO
 		data:{
+			type:'string' // System Input
+		},
+		// extra
+		signed:{
+			...basicSchemas.signedTx // TO
+		},
+		transactionHash:{
 			type:'string'
 		},
-		signed:{
-			type:'string'
-		}
+
 	}
 }
 

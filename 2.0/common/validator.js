@@ -56,6 +56,34 @@ let validate = (payload)=>{
   })
 }
 
+
+let isBN = (bn)=>{
+  // web3js
+  // http://web3js.readthedocs.io/en/1.0/web3-utils.html#isbn
+}
+let isBigNumber = (bignumber)=>{
+  // web3js
+  // http://web3js.readthedocs.io/en/1.0/web3-utils.html#isbignumber
+  // TODO
+}
+let isHex = (mixed)=>{
+  // web3js
+  // http://web3js.readthedocs.io/en/1.0/web3-utils.html#ishex
+  // TODO
+}
+let isAddress = (mixed)=>{
+  // web3js
+  // http://web3js.readthedocs.io/en/1.0/web3-utils.html#isaddress
+  // TODO
+}
+
+
+
+
 export default {
-  validate
+  validate,
+  isBN,
+  isBigNumber,
+  isHex,
+  isAddress,
 }

@@ -18,10 +18,9 @@ export default class Account {
       address,
     }
   }
-  static encrypt(privateKey, password){
-    // TODO type validate
-    const keystoreJsonV3 = keystore.pkeyToKeystore(privateKey,privateKey)
-    return keystoreJsonV3
+  static encrypt(privateKey, password){ 
+    return keystore.pkeyToKeystore(privateKey,password)
+    // return keystoreJsonV3
   }
   static decrypt(keystoreJsonV3, password){
     // TODO type validate
@@ -34,9 +33,9 @@ export default class Account {
       address,
     }
   }
-  static formatAddress(address){
-    validator.validate({type:'ADDRESS',value:address})
-    return formatter.format({type:'ADDRESS',value:address})
+  static download(){
+    // TODO
   }
+
 }
 

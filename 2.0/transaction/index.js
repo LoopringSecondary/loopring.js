@@ -9,6 +9,7 @@ export default class Transaction {
   constructor(tx) { 
     validator.validate({value:tx,type:'TX'})
     this.tx = tx
+
   }
   getTx(){
     return this.tx
@@ -23,10 +24,10 @@ export default class Transaction {
   }
   sign(privateKey){
     validator.validate({value:privateKey,type:'PRIVATE_KEY'})
-    privateKey = formatter.format({value:privateKey,type:'PRIVATE_KEY_BUFFER'})
+    privateKey = formatter.toBuffer(privateKey)
     const ethTx = new EthTransaction(this.tx)
-    ethTx.sign(privateKey)
-    this.tx.signed = '0x' + ethTx.serialize().toString('hex')
+    const signed = ethTx.sign(privateKey).serialize()
+    this.tx.signed = formatter.toHex(signed)
   }
   async send(){
     return apis.sendRawTransaction(this.tx.signed) 
@@ -37,6 +38,8 @@ export default class Transaction {
   static async batchSign(){
     // TODO
   }
+
+
 
 }
 

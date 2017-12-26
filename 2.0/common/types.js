@@ -25,3 +25,14 @@
 //   signed: HEX;
 // }
 
+
+// {
+// 	to: ADDRESS    
+//   value: QUANTITY
+//   gasLimit: QUANTITY
+//   gasPrice: QUANTITY
+//   chainId: number
+//   data: string;
+//   nonce: string;
+//   signed: HEX;
+// }

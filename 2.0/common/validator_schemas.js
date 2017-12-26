@@ -10,21 +10,17 @@ let basicSchemas ={
   ADDRESS:{
     type:'string',
     required:true, 
-    pattern:/^0x[0-9a-fA-F]{1,64}$/g,
-  },
-  HEX:{
-    type:'string',
-    required:true, 
-    pattern:/^0x[0-9a-fA-F]+$/g,
+    pattern:/^0x[0-9a-fA-F]{40}$/g,
   },
   QUANTITY:{
     type:'string',
     required:true,
+    pattern:/^0x[0-9a-fA-F]{1,64}$/g,
   },
-  PRIVATE_KEY:{
+  HEX:{
     type:'string',
-    required:true, 
-    length:64,
+    required:true,
+    pattern:/^0x[0-9a-fA-F]+$/g,
   },
   ABI_METHOD:{
     type:'enum',
@@ -39,15 +35,24 @@ let basicSchemas ={
   TIMESTAMP:{
     type:'string',
   },
-  PRIVATE_KEY_BUFFER:{
-    validator:(rule,value,cb)=>{
-      if (value instanceof Buffer && pk.length === 32){
-          cb()
-      }else{
-          cb('private_key must be buffer')
-      }
-    }
-  },
 }
-
+// TX_SIGNED:{
+//     type:'string',
+//     required:true, 
+//     pattern:/^0x[0-9a-fA-F]+$/g, // legnth 不定
+//   },
+//   SIGNATURE:{ //for signature
+//     type:'string',
+//     required:true, 
+//     pattern:/^0x[0-9a-fA-F]{64}$/g,
+//   },
+//   PRIVATE_KEY:{
+//     validator:(rule,value,cb)=>{
+//       if (value instanceof Buffer && pk.length === 32){
+//           cb()
+//       }else{
+//           cb('private_key must be buffer')
+//       }
+//     }
+//   },
 export default basicSchemas

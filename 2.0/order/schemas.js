@@ -3,45 +3,60 @@ import basicSchemas from '../common/validator_schemas'
 let standSchemas = {
 	ORDER:{
 		'protocol': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{40}$'
+		    ...basicSchemas.ADDRESS
 		},
 		'owner': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{40}$'
+		    ...basicSchemas.ADDRESS
 		},
 		'tokenS': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{40}$'
+		    ...basicSchemas.ADDRESS
 		},
 		'tokenB': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{40}$'
+		    ...basicSchemas.ADDRESS
 		},
 		'buyNoMoreThanAmountB': {
 		    'type': 'boolean'
 		},
 		'marginSplitPercentage': {
 		    'type': 'integer',
-		    'minimum': 0,
-		    'maximum': 100
+		    'min': 0,
+		    'max': 100
 		},
+		// 'amountS':{
+
+		// },
+		// 'amountB':{
+
+		// },
+		// 'timestamp':{
+
+		// },
+		// 'ttl':{
+
+		// },
+		// 'salt':{
+
+		// },
+		// 'lrcFee':{
+
+		// },
 		'r': {
 		    'type': 'integer',
-		    'minimum': 0
+		    'min': 0
 		},
 		's': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{64}$'
+		    ...basicSchemas.HEX,
+		    length:66,
 		},
 		'v': {
-		    'type': 'string',
-		    'pattern': '^0x[0-9a-fA-F]{64}$'
+		    ...basicSchemas.HEX,
+		    length:66,
 		}
 	}
 }
 
 export default standSchemas
+
 
 
 
