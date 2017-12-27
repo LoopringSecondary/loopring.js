@@ -3,8 +3,6 @@ import formatter from '../common/formatter'
 import keystore from '../common/keystore'
 import crypto  from 'crypto'
 import ethereumUtil  from 'ethereumjs-util'
-import Transaction  from '../Transaction'
-
 
 export default class Account {
   constructor(privateKey){
@@ -26,8 +24,7 @@ export default class Account {
     return keystore.pkeyToKeystore(privateKey,password) // keystoreJsonV3
   }
   static decrypt(keystoreJsonV3, password){
-    const keystore.decryptKeystoreToPkey(keystoreJsonV3,password) // privateKey
-    
+    return keystore.decryptKeystoreToPkey(keystoreJsonV3,password) // privateKey
   }
   static download(){
     // TODO

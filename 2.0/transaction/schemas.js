@@ -1,4 +1,5 @@
 import basicSchemas from '../common/validator_schemas' 
+import BigNumber from 'bignumber.js'
 
 let signedTx = {
 
@@ -10,10 +11,10 @@ let standSchemas = {
 			...basicSchemas.ADDRESS
 		},    
 		value:{
-			...basicSchemas.QUANTITY // User Input
+			...basicSchemas.QUANTITY
 		},
 		gasLimit:{
-			validator(rule,value,cb)=>{
+			validator(rule,value,cb){
 				const gasLimit = new BigNumber(Number(value))
 				if (gasLimit.lessThan(21000))
 				{
@@ -27,27 +28,20 @@ let standSchemas = {
 			}
 		},  
 		gasPrice:{
-			...basicSchemas.QUANTITY // User Input
+			...basicSchemas.QUANTITY
 		},
 		chainId:{
 			type:'number', 
 		},
 		nonce:{
-			type:'string' // System Input
+			type:'string' 
 		},
 		// v, TODO
 		// r, TODO
 		// s, TODO
 		data:{
-			type:'string' // System Input
+			type:'string' 
 		},
-		// extra
-		// signed:{
-		// 	...basicSchemas.signedTx // TO
-		// },
-		// transactionHash:{
-		// 	type:'string'
-		// },
 	},
 }
 
