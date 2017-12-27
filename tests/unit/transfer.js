@@ -4,121 +4,56 @@ import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Loopring from '../../2.0/loopring'
 
+new Loopring('https://relay1.loopring.io/rpc')
+console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function testLoopring(){
-	new Loopring('https://relay1.loopring.io/rpc')
-	console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
-}
-testLoopring()
-
-
-let payload = {}
-let address = '0xebA7136A36DA0F5e16c6bDBC739c716Bb5B65a00'
-let amount = '1000'
-let tag = 'latest'
-
-
-// testApi()
-function testAbi(){
-	let result = abis.generateApproveData(address,amount)
-	console.log('abis.generateApproveData result',result)
-}
-
-testApi()
-function testApi(){
-	apis.getTransactionCount(address,tag).then(res=>{
-	  // console.log("getTransactionCount res",res)
-	})
-
-	let signedTx_hex = '0x0101010'
-	apis.sendRawTransaction(signedTx_hex).then(res=>{
-	  // console.log("sendRawTransaction res",res)
-	})
+async function transferStart(rawTx,address,privateKey,amount,tag){
+    let abiDataParams = {
+      method:'transfer',
+      address:address,
+      amount: amount
+    }
+    let nonceParams = [
+      address,
+      tag,
+    ]
+    tx = new Transaction(rawTx)
+    tx.setData(abiDataParams)
+    await tx.setNonce(...nonceParams)
+    tx.sign(privateKey)
+    return tx;
 }
 
-async function testModel(){
-	payload = {
-		to:'0xebA7136A36DA0F5e16c6bDBC739c716Bb5B65a00',
-		value:'111',
-		gasPrice:'111',
-		gasLimit:'111',
-	}
-	let tx = new Transaction(payload)
-	console.log('tx',tx)
-	
-	payload = {
-		method:'approve',
-		address,	
-		amount,
-	}
-	tx.setData(payload)
-	console.log('tx.data',tx.getTx().data)
-	await tx.setNonce(address,tag)
-	console.log('tx.nonce',tx.getTx().nonce)
-	await tx.sign()
-	console.log('tx.signed',tx.getTx().signed)
-	const res = await tx.send()
+async function transfer(){
+	 let tx = await transferStart()
+	 let res = await tx.send()
 }
 
-// testModel()
 
-
-
-
-
-
-
-
-// import Schema from 'async-validator'
-
-// const schema = new Schema({
-//   name: {
-//     type: 'number',
-//     validator(rule,value,cb){
-//       console.log('value',value)
-//       cb(false)
+// async function transferByStatic(rawTx,address,privateKey,amount,tag){
+//     let abiDataParams = {
+//       method:'transfer',
+//       address:address,
+//       amount: amount
 //     }
-//   }
-// })
+//     let nonceParams = [
+//       address,
+//       tag,
+//     ]
+    
+//     if(!rawTx.data){
+//     	rawTx.data = Transaction.generateAbiData(abiDataParams)
+//     }
+//     if(!rawTx.nonce){
+//     	rawTx.nonce = await Transaction.generateNonce(...nonceParams)
+//     }
+//     if(!rawTx.chainId){
+//     	rawTx.chainId = 1
+//     }
+//     const signedTx = Transaction.sign(rawTx,privateKey)
+//     const res = Transaction.send(signedTx)
 
-// schema.validate({
-//   name: 'hello',
-// }, (errors, fields) => {
-//   console.log('errors',errors)
-//   console.log('fields',fields)
-// })
-
-
-  // async cancel(amount, privateKey){
-  //   this.sign()
-  //   const rawTx = {...this.order}
-  //   const tx = Transaction(rawTx)
-  //   tx.setData({
-  //     method:'cancelOrder',
-  //     order:this.order
-  //   })
-  //   await tx.setNonce()
-  //   await tx.sign(privateKey)
-  //   await tx.send()
-  // }
 // }
 
-// this.cancel = (amount, privateKey) =>
-//     {
-//         if (!r || !v || !s)
-//         {
-//             this.sign(privateKey);
-//         }
 
-//         const order = {
-//             addresses: [owner, tokenS, tokenB],
-//             orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
-//             buyNoMoreThanAmountB,
-//             marginSplitPercentage,
-//             v,
-//             r,
-//             s
-//         };
 
-//         return signer.generateCancelOrderData(order);
-//     };

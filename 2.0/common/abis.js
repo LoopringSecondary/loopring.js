@@ -97,7 +97,7 @@ export const generateAllowanceData = (owner, spender) =>
     return '0x' + method + data;
 };
 
-export const getAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
+export const generateAbiData = ({method,timestamp,address,amount,order,owner,spender})=>{
     validator.validate({value:method,type:'ABI_METHOD'})
     switch (method) {
         case 'cancelOrder':
@@ -118,5 +118,6 @@ export const getAbiData = ({method,timestamp,address,amount,order,owner,spender}
 }
 
 export default {
-    getAbiData,
+    generateAbiData,
+    solSHA3,
 }
