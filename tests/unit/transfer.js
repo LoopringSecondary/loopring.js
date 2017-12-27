@@ -7,6 +7,14 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
+
+
+// generate tx: need to much params
+	// TODO
+// sign tx : need private key
+// send tx 
+
+
 async function transferStart(rawTx,address,privateKey,amount,tag){
     let abiDataParams = {
       method:'transfer',

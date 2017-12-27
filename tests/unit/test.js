@@ -63,8 +63,6 @@ async function testModel(){
 // testModel()
 
 
-
-
 // import Schema from 'async-validator'
 
 // const schema = new Schema({
@@ -79,9 +77,9 @@ async function testModel(){
 
 // schema.validate({
 //   name: 'hello',
+
+
 // }, (errors, fields) => {
 //   console.log('errors',errors)
 //   console.log('fields',fields)
 // })
-
-

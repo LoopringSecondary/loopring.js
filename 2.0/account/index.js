@@ -6,7 +6,11 @@ import ethereumUtil  from 'ethereumjs-util'
 
 export default class Account {
   constructor(privateKey){
-    this.privateKey = privateKey
+    if(!privateKey){
+      const privateKey = crypto.randomBytes(32)
+    }else{
+      this.privateKey = privateKey  
+    }
     this.publicKey = ethereumUtil.privateToPublic(privateKey)
     this.address = ethereumUtil.publicToAddress(publicKey)
   }
