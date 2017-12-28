@@ -7,23 +7,18 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-
-function generateRelatedRawTxs(){
+function generateRelatedRawTxs(timestamp){
+  timestamp = '0x' + (Number(timestamp) / 1000).toString(16) // TODO formatter
   let raws = []
-  const timestamp = '0xxxx';
-  const abiData = abis.generateCutOffData(timestamp)
-  const rawTx = {
-      to: getContractAddress(), // TODO
-      gasPrice: getDefaultGasPrice(), // TODO
-      gasLimit: '0x14820',
-      value: '0x0',
-      data:abiData
-  }
+  let rawTx = {}
+  rawTx.to = utils.getContractAddress()
+  rawTx.gasPrice = utils.getDefaultGasPrice()
+  rawTx.gasLimit = utils.getDefaultGasLimit()
+  rawTx.value = '0x0'
+  rawTx.data = abis.generateCutOffData(timestamp)
   raws.push(rawTx)
   return raws
-
 }
-
 function sendRelatedRawTxs(){
   // TODO
 }
