@@ -8,27 +8,6 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-let getContractAddress = ()=>{
-  return 'xxx'
-}
-let getTokenAddress = (token)=>{
-  return 'xxx'
-}
-let getWalletAddress = ()=>{
-  return 'xxx' 
-}
-
-let checkBalanceForGas(rawTx){
-  const balances = {}
-  const balance = balances['ETH'] ? balances['ETH'].balance : 0
-  const need = Number(rawTx.gasLimit) * Number(rawTx.gasPrice)
-  if(need>balance){
-    let tip ='You has insufficient ETH balance for gasLimit * gasPrice';
-    return false
-  }else{
-    return true
-  }
-}
 let checkBalanceForLRC(){
   // TODO
 }
@@ -72,34 +51,35 @@ function generateRawOrder(values){
   }
 }
 
-function generateRawTx(rawOrder){
-  function generateAbiData(method,signedOrder){
-    // TODO 
-    // amountS，amountB 是否在orderSchema中
-    let {
-      owner, tokenS, tokenB,
-      amountS, amountB, timestamp, ttl, salt, lrcFee,
+function generateAbiData(method,signedOrder){
+  // TODO 
+  // amountS，amountB 是否在orderSchema中
+  let {
+    owner, tokenS, tokenB,
+    amountS, amountB, timestamp, ttl, salt, lrcFee,
+    buyNoMoreThanAmountB,
+    marginSplitPercentage,
+    v,
+    r,
+    s
+  } = signedOrder
+  const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
+  const dataParams = {
+    method:'cancelOrder', // method
+    params: {
+      addresses: [owner, tokenS, tokenB],
+      orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
       buyNoMoreThanAmountB,
       marginSplitPercentage,
       v,
       r,
       s
-    } = signedOrder
-    const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
-    const dataParams = {
-      method:'cancelOrder', // method
-      params: {
-        addresses: [owner, tokenS, tokenB],
-        orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
-        buyNoMoreThanAmountB,
-        marginSplitPercentage,
-        v,
-        r,
-        s
-      },
-    }
-    return abis.generateAbiData(dataParams)
+    },
   }
+  return abis.generateAbiData(dataParams)
+}
+
+function generateRawTx(rawOrder){
   let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed
   const abiData = order.generateAbiData('cancelOrder') // TODO
