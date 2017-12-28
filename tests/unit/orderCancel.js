@@ -39,7 +39,29 @@ function orderValidator(values){
   }
 }
 
-function orderFormatter(values){
+function generateRawOrder(values){
+
+  // let currentVersion = this.settingsVersion;
+  // const contractAddress = this.appConfig.contractVersionMap[currentVersion].address;
+
+  // const target = e.target.order;
+  // let data = {};
+  // data.protocol = contractAddress;
+  // data.owner = this.wallet.address;
+  // data.tokenS = this.appConfig.tokenMap[target.tokenS.toUpperCase()].address;
+  // data.tokenB = this.appConfig.tokenMap[target.tokenB.toUpperCase()].address;
+  // data.amountS = target.amountS;
+  // data.amountB = target.amountB;
+  // data.timestamp = target.timestamp;
+  // data.ttl = target.ttl;
+  // data.salt = target.salt;
+  // data.lrcFee = target.lrcFee;
+  // data.buyNoMoreThanAmountB = target.buyNoMoreThanAmountB;
+  // data.marginSplitPercentage = target.marginSplitPercentage;
+  // data.v = Number(target.v);
+  // data.r = target.r;
+  // data.s = target.s;
+
   return {
     ...values,
     protocol: getContractAddress(),
@@ -50,39 +72,35 @@ function orderFormatter(values){
   }
 }
 
-function generateAbiData(method,signedOrder){
-  // TODO 
-  // amountS，amountB 是否在orderSchema中
-  let {
-    owner, tokenS, tokenB,
-    amountS, amountB, timestamp, ttl, salt, lrcFee,
-    buyNoMoreThanAmountB,
-    marginSplitPercentage,
-    v,
-    r,
-    s
-  } = signedOrder
-  const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
-  const dataParams = {
-    method:'cancelOrder', // method
-    params: {
-      addresses: [owner, tokenS, tokenB],
-      orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
+function generateRawTx(rawOrder){
+  function generateAbiData(method,signedOrder){
+    // TODO 
+    // amountS，amountB 是否在orderSchema中
+    let {
+      owner, tokenS, tokenB,
+      amountS, amountB, timestamp, ttl, salt, lrcFee,
       buyNoMoreThanAmountB,
       marginSplitPercentage,
       v,
       r,
       s
-    },
+    } = signedOrder
+    const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
+    const dataParams = {
+      method:'cancelOrder', // method
+      params: {
+        addresses: [owner, tokenS, tokenB],
+        orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
+        buyNoMoreThanAmountB,
+        marginSplitPercentage,
+        v,
+        r,
+        s
+      },
+    }
+    return abis.generateAbiData(dataParams)
   }
-  return abis.generateAbiData(dataParams)
-}
-
-
-async function cancelOrderStart(basicOrder,privateKey){
-
-
-  let order = new Order(basicOrder)
+  let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed
   const abiData = order.generateAbiData('cancelOrder') // TODO
   const protocol = order.protocol
@@ -96,16 +114,15 @@ async function cancelOrderStart(basicOrder,privateKey){
       value: '0x0',
       data: abiData
   }
-  
+  return rawTx
+}
+
+async function cancelOrder(rawTx,privateKey){
   const tx = Transaction(rawTx)
   // tx.setData(dataParams) // TODO
   await tx.setNonce()
   tx.sign()
   await tx.send()
-  return tx;
+  
 }
 
-async function cancelOrder(){
-  const tx = cancelOrderStart() // TODO
-  tx.send()
-}
