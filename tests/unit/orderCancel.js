@@ -7,40 +7,64 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-//   async cancel(amount, privateKey){
-    
-//     const setDataParams = {
-//         method:'cancelOrder',
-//         order:order
-//     }
-//     const baseTx = {...this.order}
-//     const tx = Transaction(baseTx)
-//     tx.setData()
-//     await tx.setNonce()
-//     await tx.sign(privateKey)
-//     await tx.send()
-//   }
-// }
-// 
 
-async function cancelOrderStart(order,privateKey){
-  
+let getContractAddress = ()=>{
+  return 'xxx'
+}
+let getTokenAddress = (token)=>{
+  return 'xxx'
+}
+let getWalletAddress = ()=>{
+  return 'xxx' 
+}
+
+let checkBalanceForGas(rawTx){
+  const balances = {}
+  const balance = balances['ETH'] ? balances['ETH'].balance : 0
+  const need = Number(rawTx.gasLimit) * Number(rawTx.gasPrice)
+  if(need>balance){
+    let tip ='You has insufficient ETH balance for gasLimit * gasPrice';
+    return false
+  }else{
+    return true
+  }
+}
+let checkBalanceForLRC(){
+  // TODO
+}
+
+function orderValidator(values){
+  if (!values.tokenS || !values.tokenB) {
+    console.log('token not exist')
+  }
+}
+
+function orderFormatter(values){
+  return {
+    ...values,
+    protocol: getContractAddress(),
+    owner: getWalletAddress(),
+    tokenS: getTokenAddress(values.tokenS),
+    tokenB: getTokenAddress(values.tokenB),
+    v: Number(values.v),
+  }
+}
+
+function generateAbiData(method,signedOrder){
+  // TODO 
+  // amountS，amountB 是否在orderSchema中
   let {
     owner, tokenS, tokenB,
-    amountS, amountB, timestamp, ttl, salt, lrcFee, amount,
+    amountS, amountB, timestamp, ttl, salt, lrcFee,
     buyNoMoreThanAmountB,
     marginSplitPercentage,
     v,
     r,
     s
-  } = order
-  
-  // TODO: get rawTx from order
-
-  const rawTx = {}
-  const tx = Transaction(rawTx)
+  } = signedOrder
+  const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
   const dataParams = {
-    method:'cancelOrder',
+    method:'cancelOrder', // method
     params: {
       addresses: [owner, tokenS, tokenB],
       orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
@@ -51,7 +75,30 @@ async function cancelOrderStart(order,privateKey){
       s
     },
   }
-  tx.setData(dataParams)
+  return abis.generateAbiData(dataParams)
+}
+
+
+async function cancelOrderStart(basicOrder,privateKey){
+
+
+  let order = new Order(basicOrder)
+  order.sign() // TODO : order must be signed
+  const abiData = order.generateAbiData('cancelOrder') // TODO
+  const protocol = order.protocol
+  const defaultGasPrice = 'xxx';
+  const gasPrice = '0x' + (Number(defaultGasPrice) * 1e9).toString(16) // TODO formatter
+  
+  const rawTx = {
+      to: protocol,
+      gasPrice:gasPrice,
+      gasLimit: '0x14820', // TODO 
+      value: '0x0',
+      data: abiData
+  }
+  
+  const tx = Transaction(rawTx)
+  // tx.setData(dataParams) // TODO
   await tx.setNonce()
   tx.sign()
   await tx.send()

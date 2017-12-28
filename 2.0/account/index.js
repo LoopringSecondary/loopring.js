@@ -28,10 +28,18 @@ export default class Account {
     return keystore.pkeyToKeystore(privateKey,password) // keystoreJsonV3
   }
   static decrypt(keystoreJsonV3, password){
-    return keystore.decryptKeystoreToPkey(keystoreJsonV3,password) // privateKey
+    const privateKey = keystore.decryptKeystoreToPkey(keystoreJsonV3,password) // privateKey
+    const publicKey = ethereumUtil.privateToPublic(privateKey)
+    const address = ethereumUtil.publicToAddress(publicKey)
+    return {
+      privateKey:formatter.toHex(privateKey),
+      publicKey,
+      address,
+    }
+    
   }
   static download(){
-    // TODO
+    // TODO 
   }
 
 }

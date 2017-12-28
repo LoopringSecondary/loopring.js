@@ -10,7 +10,8 @@ console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 function generateAccount(password) {
   let account = Account.create()
-  let keystore = Account.encrypt(account.privateKey,password)
+  const privateKey = account.privateKey
+  let keystore = Account.encrypt(privateKey,password)
   return keystore
 }
 function unlockAccount(keystoreJsonV3,password) {
