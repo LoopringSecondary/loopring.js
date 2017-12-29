@@ -96,34 +96,51 @@ function submitOrder(rawOrder){
   return order.submit()
 }
 
+function getPayment(){
+  this.token=token
+  this.gas=token
+}
+
 function allowance(token){
 
+  
+  return {
 
-  const banlance = utils.getBanlanceOfToken(token.name)
-  const allowance = Number(token.allowance)
-
-  this.getCurrent = ()=>{
+  }
+  
+  function getCurrent = ()=>{
     return token.allowance
   }
-  this.getRequired = ()=>{
+  function getRequired = ()=>{
     let required;
     if(token.name==='LRC'){
-      required = Number(data.amounts) + Number(data.lrcFee);
+      required = Number(amount) + Number(lrcFee);
     }else{
-      required = Number(data.amounts)
+      required = Number(amount)
     }
     return required
   }
-  this.getShouldApprove =()=>{
-    let token = {}
+  function getToApprove =()=>{
+    let balance = token.balance;
+    let allowance = token.allowance;
+    let toApprove = token.allowance;
+    let toApprove = token.requiedAl;
+
+
+
     if (balance < allowance) { 
-        amount = balance 
+        toApprove = balance 
     }
     if (balance > allowance) { 
-        amount = allowance > required ? allowance : required
+        toApprove = allowance > required ? allowance : required
     }
     return amount
   }
+
+  this.current = getCurrent()
+  this.required = getRequired()
+  
+
 }
 
 function getApprovedRawTx(amount){
@@ -146,20 +163,12 @@ function generateRawTxs(){
   const requiredAllowance = '';
   const toApproveAllowance = '';
 
-
-  if(currentAllowance==0){
-    let tx1 = getApprovedRawTx(amount)
-  }else{
-    let tx2 = getApprovedRawTx(0) // cancel set 0
-    let tx3 = getApprovedRawTx(amount) // 
+  if(currentAllowance>0){
+    const cancelRawTx = getApprovedRawTx(0)
+    raw.push(cancelRawTx)
   }
-  
-
-
-  // 第一步：保证 Token banlance足够
-  // 第二步：保证 Token allowance足够：判断 花销 和 allowance，
-  // 第三步：保证 LRC 费用足够
-  // 第四步：保证 GAS 费用足够
+  const toApproveRawTx = getApprovedRawTx(toApproveAllowance) 
+  raw.push(approveRawTx)
   
   function balanceCheck(){
 
