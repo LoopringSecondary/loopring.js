@@ -63,6 +63,26 @@ function lrcValidator(){
   // TODO
 }
 
+// TODO
+isLrcFeeEnough(lrcFee, lrcBalance, token, amount) {
+
+    if (lrcFee >= 0 && lrcBalance >= 0 && token && amount >= 0) {
+        return token.token.toUpperCase() === "LRC" ? Number(amount) + lrcFee <= lrcBalance: lrcFee <= lrcBalance;
+    }
+    return true
+}
+// TODO
+function getLrcFee(){
+  let bool = this.isLrcFeeEnough(this.sellFee, this.lrcBalance,this.tokens,this.sellAmount)
+
+  if(bool){
+    // lrcFee is enoungh
+    return '0x' + new BigNumber(this._showAmount(this.sellFee)).times(Number('1e' + this.lrc.digits)).toString(16)
+  }else{
+    return '0x0'
+  }
+}
+
 function generateRawOrder(formInput){
   const {
     tokens={},
@@ -82,11 +102,8 @@ function generateRawOrder(formInput){
   raw.ttl = 30 * 24 * 3600;
   raw.salt = Math.round(Math.random() * 1e8);
   raw.buyNoMoreThanAmountB = false;
-  raw.lrcFee = this.isEnoughFee(this.lrcFee, this.lrcBalance,this.tokens) ? '0x' + (this._showAmount(this.lrcFee) * Number('1e' + this.lrc.digits)).toString(16) : '0x0';
+  raw.lrcFee = getLrcFee()
   raw.marginSplitPercentage = Number(raw.lrcFee) !==0 ? Number(this.settingsMarginSplit) : 100;
-  // lrcFee的作用
-  //  - 存入order
-  //  
   return raw;
 }
 
@@ -96,323 +113,114 @@ function submitOrder(rawOrder){
   return order.submit()
 }
 
-function getPayment(){
-  this.token=token
-  this.gas=token
-}
-
-function allowance(token){
-
-  
-  return {
-
-  }
-  
-  function getCurrent = ()=>{
-    return token.allowance
-  }
-  function getRequired = ()=>{
-    let required;
-    if(token.name==='LRC'){
-      required = Number(amount) + Number(lrcFee);
-    }else{
-      required = Number(amount)
-    }
-    return required
-  }
-  function getToApprove =()=>{
-    let balance = token.balance;
-    let allowance = token.allowance;
-    let toApprove = token.allowance;
-    let toApprove = token.requiedAl;
-
-
-
-    if (balance < allowance) { 
-        toApprove = balance 
-    }
-    if (balance > allowance) { 
-        toApprove = allowance > required ? allowance : required
-    }
-    return amount
-  }
-
-  this.current = getCurrent()
-  this.required = getRequired()
-  
-
-}
-
-function getApprovedRawTx(amount){
-    amount = '0x' + Number(amount).toString(16)
-    let token = {}
+function getApprovedRawTx(token){
     const spender = utils.getDelegateAddress()
-    let tx = {}
-    tx.gasLimit = utils.getDefaultGasLimit()
-    tx.gasPrice = utils.getDefaultGasPrice()
-    tx.to = token.address
-    tx.value = '0x0'
-    tx.data = abi.generateApproveData(spender,amount)
-    return tx;
+    const amountToApprove = token.amountToApprove
+    // amountToApprove = '0x' + Number(amountToApprove).toString(16)
+    return {
+      gasLimit: utils.getDefaultGasLimit(),
+      gasPrice: utils.getDefaultGasPrice(),
+      to: token.address,
+      value: '0x0',
+      data: abi.generateApproveData(spender,amountToApprove)
+    }
 }
 
-function generateRawTxs(){
-  const raws = []
-  const token = {};
-  const currentAllowance = '';
-  const requiredAllowance = '';
-  const toApproveAllowance = '';
 
-  if(currentAllowance>0){
-    const cancelRawTx = getApprovedRawTx(0)
-    raw.push(cancelRawTx)
+function token(){
+
+  // lrcFee  TODO
+  // response TODO
+  this.name = ''
+  this.balance = 0
+  this.allowance = 0
+  this.amountToPay = 0
+  this.amountToApprove
+
+  this.setAmountToPay = ()=>{
+    if(this.name==='LRC'){
+      // amountToPay = Number(amount) + Number(lrcFee);
+      this.amountToPay = new BigNumber(this.amountToPay).plus(lrcFee).plus(response.result) ;
+    }else{
+      this.amountToPay = new BigNumber(this.amountToPay).plus(response.result) ;
+    }
   }
-  const toApproveRawTx = getApprovedRawTx(toApproveAllowance) 
-  raw.push(approveRawTx)
   
-  function balanceCheck(){
+  this.setAmountToPay()
 
-  }
-  function allowanceCheck(){
-    // 如果 交易的是LRC
-      // 比较 支付金额 和 已授权金额的大小
-        // 如果支付金额 > 已授权金额
-          // 如果已授权金额 为 0 ，怎新增一个授权的tx
-          // 如果已授权金额 不为 0 ，怎新增两个授权的tx，
-        // 
-    // 如果交易的不是LRC
+  this.setAmountToApprove = ()=>{
+    if (this.amountToPay.gt(this.allowance) ) {
+        const JAVA_LONG_MAX = '9223372036854775806'
+        this.amountToApprove = new BigNumber(JAVA_LONG_MAX).times(Number('1e'+this.digits))
+    }else{
+        this.amountToApprove = 0 
+        // Do need to approve
+    }
   }
 
-  function lrcCheck(){
-  }
-  function gasCheck(){
-  }
-  function test(){
+  this.setAmountToApprove()
 
+  this.generateRawTxs = ()=>{
+    let raws = []
+    if(this.amountToApprove){
+      if(this.allowance>0){
+        const cancelRawTx = getApprovedRawTx(0)
+        raws.push(cancelRawTx)
+      }
+      const toApproveRawTx = getApprovedRawTx(this.amountToApprove) 
+      raws.push(toApproveRawTx)
+    }
+    return raws
   }
+}
+
+
+function sell(){
+  let order = Order()
+
+  let token = token()
+  let rawTxs = token.generateRawTxs
+
 
 }
 
 
-            async placeBuyOrder() {
+
+function getAmountToPay(token,lrcFee){
+
+  if(token.name==='LRC'){
+    // amountToPay = Number(amount) + Number(lrcFee);
+    token.amountToPay = new BigNumber(token.amountToPay).plus(lrcFee).plus(response.result) ;
+  }else{
+    token.amountToPay = new BigNumber(token.amountToPay).plus(response.result) ;
+  }
+  return amountToPay
+}
+
+function getAmountToApprove(token){
+
+  if (token.amountToPay.gt(token.allowance) ) {
+      const JAVA_LONG_MAX = '9223372036854775806'
+      token.amountToApprove = new BigNumber(JAVA_LONG_MAX).times(Number('1e'+token.digits))
+  }else{
+      token.amountToApprove = 0 // Do need to approve
+  }
+  return token.amountToApprove
+}
 
 
 
-                try {
-                    
+function generateRawTxs(order){
+  let raws = []
+  if(token.amountToApprove){
+    if(token.allowance>0){
+      const cancelRawTx = getApprovedRawTx(0)
+      raws.push(cancelRawTx)
+    }
+    const toApproveRawTx = getApprovedRawTx(token.amountToApprove) 
+    raws.push(approveRawTx)
+  }
 
-                    let data = {};
-                    const detail = {};
-                    const raws = [];
-                    // let currentVersion = this.settingsVersion;
-                    // const spender = this.appConfig.delegateAddress;
-                    // data.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-                    // data.owner = this.wallet.address;
-                    // data.tokenS = this.tokenb.address;
-                    // data.tokenB = this.tokens.address;
-                    // data.amountS = '0x' + Number((Number(this.buyTotal) * Number('1e' + this.tokenb.digits)).toFixed(0)).toString(16);
-                    // data.amountB = '0x' + (Number(this.buyAmount) * Number('1e' + this.tokens.digits)).toString(16);
-                    // data.timestamp = Number((new Date().getTime() / 1000).toFixed(0));
-                    // data.ttl = 10 * 24 * 3600;
-                    // data.salt = Math.round(Math.random() * 1e8);
-                    
-                    // if (!this.lrc) {
-                    //     const detail = {
-                    //         text: 'Can\'t get LRC Config',
-                    //         category: "warning",
-                    //         duration: 5000
-                    //     };
-                    //     this.dispatchEvent(new CustomEvent('notification', {
-                    //         bubbles: true,
-                    //         composed: true,
-                    //         detail: detail
-                    //     }));
-                    //     return;
-                    // }
-                    // data.lrcFee = this.isEnoughFee(this.lrcFee, this.lrcBalance,this.tokenb) ? '0x' + (this._showAmount(this.lrcFee) * Number('1e' + this.lrc.digits)).toString(16) : '0x0';
-                    // data.buyNoMoreThanAmountB = true;
-                    // data.marginSplitPercentage = Number(data.lrcFee) !==0 ? Number(this.settingsMarginSplit) : 100;
-                    // detail.order = {
-                    //     raw: JSON.stringify(data),
-                    //     subTitle: "Place an order",
-                    //     description:"Buy "+Number(this.buyAmount)+" "+ this.tokens.token.toUpperCase()+" with "+ Number(this.buyTotal) +" "+ this.tokenb.token.toUpperCase()
-                    // };
+}
 
-                    // const balances = _.keyBy(this.balancesRaw.result.tokens, 'token');
-                    // const balance = balances[this.tokenb.token.toUpperCase()] ? Number(balances[this.tokenb.token.toUpperCase()].balance) : 0;
-                    // const allowance = balances[this.tokenb.token.toUpperCase()].allowance ? Number(balances[this.tokenb.token.toUpperCase()].allowance) : 0;
-                    // const defaultValue = Number(this.tokenb.allowance);
-                    // buy order
-                    // 如果用来购买的 token 是 lrc
-                    if (this.tokenb.token.toUpperCase() === 'LRC') {
-
-                        const require = Number(data.amounts) + Number(data.lrcFee);
-
-                        // 如果 LRC的 消费数量 大于 授权的数量
-                        if (require > allowance) {
-
-                            let amount; // 设置授权数量
-
-                            if (balance < defaultValue) { // 余额 小于所需授权
-                                amount = balance; // 全部余额都授权
-                            }
-
-                            if (balance > defaultValue) { // 余额 小于所需授权
-                                amount = defaultValue > require ? defaultValue : require
-                            }
-
-
-                            const tx = {};
-                            tx.gasPrice = gasPrice;
-                            tx.gasLimit = gasLimit;
-                            tx.to = this.tokenb.address;
-                            tx.value = '0x0';
-
-                            // 如果 无授权
-                            if (allowance === 0) {
-                                // 新增1个授权 tx
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(amount).toString(16));
-                                raws.push({"raw": JSON.stringify(tx),
-                                    "subTitle": "New Authorization Of "+this.tokenb.token.toUpperCase(),
-                                    "description":"Set allowance  to " + Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                });
-                            } else {
-                                tx.data = signer.generateApproveData(spender, '0x0');
-                                const cancelRaw = JSON.stringify(tx);
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(amount).toString(16));
-                                // 新增2个授权 tx
-                                raws.push({
-                                    "raw": cancelRaw,
-                                    "subTitle": "Cancel Older Authorization Of " + this.tokenb.token.toUpperCase(),
-                                    "description": "Set allowance  to 0 first in order to set Allowance to "+ Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                }, {"raw": JSON.stringify(tx),
-                                    "subTitle": "New Authorization Of "+this.tokenb.token.toUpperCase(),
-                                    "description":"Set allowance  to " + Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                });
-                            }
-                        }
-
-                    } else {
-                        // 如果购买的 token 不是 lrc
-                        // 如果 卖出的 token 数量 大于 授权的token数量
-                        if (Number(data.amountS) > allowance) {
-
-                            let amount;
-
-                            if (balance < defaultValue) {
-                                amount = balance;
-                            }
-
-                            if (balance > defaultValue) {
-                                amount = defaultValue > Number(data.amountS) ? defaultValue : Number(data.amountS)
-                            }
-
-                            const tx = {};
-                            tx.gasPrice = gasPrice;
-                            tx.gasLimit = gasLimit;
-                            tx.to = this.tokenb.address;
-                            tx.value = '0x0';
-                            // 新增1个 授权 tx
-                            if (allowance === 0) {
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(amount).toString(16));
-                                raws.push({
-                                    "raw": JSON.stringify(tx),
-                                    "subTitle": "New Authorization Of " + this.tokenb.token.toUpperCase(),
-                                    "description":"Set allowance  to " + Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                });
-                            } else {
-                              // 新增2个 授权 tx
-                                tx.data = signer.generateApproveData(spender, '0x0');
-                                const cancelRaw = JSON.stringify(tx);
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(amount).toString(16));
-
-                                raws.push({
-                                    "raw": cancelRaw,
-                                    "subTitle": "Cancel Older Authorization Of " + this.tokenb.token.toUpperCase(),
-                                    "description": "Set allowance  to 0 first in order to set Allowance to "+ Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                }, {
-                                    "raw": JSON.stringify(tx),
-                                    "subTitle": "New Authorization Of " + this.tokenb.token.toUpperCase(),
-                                    "description":"Set allowance  to " + Number(amount)/Number('1e'+this.tokenb.digits)+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                });
-                            }
-                        }
-
-                        // 如果 lrc 的撮合费用 > lrc的授权费
-                        if (Number(data.lrcFee) > this.lrcAllowance * Number('1e' + this.lrc.digits)) {
-
-                            const defaultlrc = Number(this.lrc.allowance);
-                            const lrcBalance = this.lrcBalance * Number('1e' + this.lrc.digits);
-                            const lrcFee = Number(data.lrcFee) ;
-
-                            let lrcAmount;
-                            if (defaultlrc >= lrcBalance) {
-                                lrcAmount = lrcBalance;
-                            }
-
-                            if (defaultlrc < lrcBalance) {
-                                lrcAmount = defaultlrc > lrcFee ? defaultlrc : lrcFee;
-                            }
-
-                            const tx = {};
-                            tx.gasPrice = gasPrice;
-                            tx.gasLimit = gasLimit;
-                            tx.to = this.tokenb.address;
-                            tx.value = '0x0';
-
-                            if (this.lrcAllowance === 0) {
-                                // 新增lrc授权
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(lrcAmount).toString(16));
-                                raws.push({"raw": JSON.stringify(tx), "subTitle": " New Authorization Of LRC ",
-                                    "description":"Improve LRC Allowance to " +Number(lrcAmount)/Number('1e'+this.lrc.digits) +" to pay the order fee"+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."});
-                            } else {
-                                tx.data = signer.generateApproveData(spender, '0x0');
-                                const cancelRaw = JSON.stringify(tx);
-                                tx.data = signer.generateApproveData(spender, '0x' + Number(lrcAmount).toString(16));
-
-                                raws.push({
-                                    "raw": cancelRaw,
-                                    "subTitle": "Cancel Older Authorization Of LRC",
-                                    "description":"Set LRC allowance to 0 in order to improve it to "+Number(lrcAmount)/Number('1e'+this.lrc.digits) +" to pay the order fee with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                }, {"raw": JSON.stringify(tx), "subTitle": "New Authorization Of LRC",
-                                    "description":"Improve LRC Allowance to " +Number(lrcAmount)/Number('1e'+this.lrc.digits) +" to pay the order fee"+" with gas is "+Number(gasLimit)+ " and gasPrice is " + Number(gasPrice)/1e9 + "Gwei."
-                                });
-                            }
-
-                        }
-                    }
-                    const ETHBalance = balances['ETH'] ? balances['ETH'].balance : 0;
-                    if (ETHBalance < raws.length * (Number(gasLimit) * Number(gasPrice))) {
-                        const errorDetail = {
-                            text: 'You has insufficient ETH balance for gasLimit * gasPrice',
-                            category: "warning",
-                            duration: 8000
-                        };
-                        this.dispatchEvent(new CustomEvent('notification', {
-                            bubbles: true,
-                            composed: true,
-                            detail: errorDetail
-                        }));
-                        return;
-                    }
-                    detail.raws = raws;
-                    this.dispatchEvent(new CustomEvent('placeorder', {
-                        bubbles: true,
-                        composed: true,
-                        detail: detail
-                    }));
-                } catch (e) {
-
-                    const detail = {
-                        text: e.message,
-                        category: "error",
-                        duration: 5000
-                    };
-                    this.dispatchEvent(new CustomEvent('notification', {
-                        bubbles: true,
-                        composed: true,
-                        detail
-                    }));
-                }
-            }
 

@@ -34,7 +34,7 @@ export function getDefaultGasPrice(){
 }
 export function getDefaultGasLimit(){
   const defaultGasLimit
-  return '0x14820'
+  return '0x' + Number(defaultGasLimit).toString(16) || '0x14820';
 }
 
 
