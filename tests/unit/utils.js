@@ -1,10 +1,10 @@
 
 
-
-
-export function toHex(){
-  // const gasPrice = '0x' + (Number(this.settingsGasPrice) * 1e9).toString(16)
-  // cutoffTimeStamp = '0x' + (Number(cutoffNode.value) / 1000).toString(16) 
+// formatter
+export function toHex(obj){
+  // obj = number / ??
+  // cutoffTimeStamp = '0x' + (Number(cutoffNode.value) / 1000)toHex
+  return  '0x' + obj.toString(16)
 }
 
 export function toQuantity(){
@@ -17,24 +17,6 @@ export function toAmount(){
   // data.amountB = '0x' + new BigNumber(new BigNumber(this.sellAmount).times(this.sellPrice).times(Number('1e' + this.tokenb.digits)).toFixed(0)).toString(16);
   return '0x' + new BigNumber(amount).times(Number('1e' + digits)).toString(16)
 }
-
-export function getContractAddress(){
-  // const spender = this.appConfig.delegateAddress;
-  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return ’xxx‘;
-}
-export function getDelegateAddress(){
-  // const spender = this.appConfig.delegateAddress;
-  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return ’xxx‘;
-}
-export function getTokenAddress(token){
-  return 'xxx'
-}
-export function getWalletAddress(){
-  return 'xxx' 
-}
-
 export function getGasPrice(amount){
   if(!amount){
     amount = defaultGasPrice // TODO 
@@ -62,9 +44,6 @@ export function getTotalAmount(amount,price,digits){
   return '0x' + new BigNumber(new BigNumber(amount).times(price).times(Number('1e' + digits)).toFixed(0)).toString(16);
 }
 
-
-
-
 export function getTTL(){
   // TODO
   let ttl = this.appConfig.defaultExpireTime * 24 * 3600;
@@ -82,6 +61,38 @@ export function getTTL(){
 export function getSalt(){
   return Math.round(Math.random() * 1e8)
 }
+
+// getter
+export function getContractAddress(){
+  // const spender = this.appConfig.delegateAddress;
+  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
+  return ’xxx‘;
+}
+export function getDelegateAddress(){
+  // const spender = this.appConfig.delegateAddress;
+  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
+  return ’xxx‘;
+}
+
+export function getWalletAddress(){
+  return 'xxx' 
+}
+export function getTokenByName(name){
+  // TODO
+  return {} 
+}
+export function getTokenByAddress(address){
+  // TODO
+  return {} 
+}
+export function getTokenAddress(token){
+  // TODO
+  return 'xxx'
+}
+
+
+
+
 
 
 

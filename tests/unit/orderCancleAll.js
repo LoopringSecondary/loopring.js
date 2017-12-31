@@ -7,14 +7,14 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function generateRelatedRawTxs(timestamp){
-  timestamp = '0x' + (Number(timestamp) / 1000).toString(16) // TODO formatter
+function generateRelatedRawTxs(){
+  const timestamp = utils.toHex(Date.parse(new Date()) / 1000)
   let raws = []
   let rawTx = {}
   rawTx.to = utils.getContractAddress()
-  rawTx.gasPrice = utils.getDefaultGasPrice()
-  rawTx.gasLimit = utils.getDefaultGasLimit()
-  rawTx.value = '0x0'
+  rawTx.gasPrice = utils.getGasPrice()
+  rawTx.gasLimit = utils.getGasLimit()
+  rawTx.value = utils.getAmount(0)
   rawTx.data = abis.generateCutOffData(timestamp)
   raws.push(rawTx)
   return raws

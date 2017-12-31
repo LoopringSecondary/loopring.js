@@ -45,8 +45,6 @@ function transfter(formInput){
 	const rawTx = inputFormatter(formInput)
 	const balanceEnough = utils.isBalanceEnough(rawTx,token) // TODO
 	const gasEnough = utils.isEthGasEnough(rawTx)
-	 
-
 }
 
 function generateRawTxs(formInput){
@@ -67,13 +65,13 @@ function generateRawTxs(formInput){
 
 	if(token.name==='ETH'){
 		rawTx.to = address
-		rawTx.value = utils.getTokenAmount(value)
+		rawTx.value = utils.getAmount(value)
 		rawTx.data = additionalData || '0x'
 	}else{
 		rawTx.to = utils.getContractAddress(token) // TO BE CONFIRMED
 		rawTx.value = '0x0'
 		rawTx.data = abis.generateTransferData(
-			formInut.address, utils.getTokenAmount()
+			formInut.address, utils.getAmount(amount)
 		) 
 	}
 	balanceValidator(rawTx,token) 
