@@ -7,104 +7,39 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-// order interfaces
-  // rawOrder
-  // signedOrder
-
-
-function toAmount =  {
-  raw.amountS = '0x' + (Number(this.sellAmount) * Number('1e' + this.tokens.digits)).toString(16);
-  raw.amountB = '0x' + Number((Number(this.sellTotal) * Number('1e' + this.tokenb.digits)).toFixed(0)).toString(16);
-}
-
-function auth(){
-
-  // 判断 是否登录 （钱包是否存在）
-  // 判断：钱包地址是否在白名单里
-  // 判断：系统配置是否设置（应该是有默认值的）
-  // 判断：LRC 配置是否配置
-  if (!this.wallet) {
-
-      const detail = {
-          text: 'Set Wallet First!',
-          category: 'warning',
-          duration: 5000,
-          link: '/#/wallet',
-          linkText: 'Go to set Wallet'
-      };
-
-      this.dispatchEvent(new CustomEvent('notification', {
-          bubbles: true,
-          composed: true,
-          detail: detail
-      }));
-
-      return;
-  }
-  if (!this.appConfig || !this.settingsMarginSplit || !this.settingsLrcFee) {
-      return;
-  }
-  if (this.appConfig.whiteList && this.appConfig.whiteList.indexOf(this.wallet.address) < 0) {
-      const detail = {
-          text: 'Your address is not in white list, could not submit order',
-          category: "warning",
-          duration: 5000
-      };
-      this.dispatchEvent(new CustomEvent('notification', {
-          bubbles: true,
-          composed: true,
-          detail: detail
-      }));
-      return;
-  }
-}
-
-function lrcValidator(){
-  // TODO
-}
-
-// TODO
-isLrcFeeEnough(lrcFee, lrcBalance, token, amount) {
-
-    if (lrcFee >= 0 && lrcBalance >= 0 && token && amount >= 0) {
-        return token.token.toUpperCase() === "LRC" ? Number(amount) + lrcFee <= lrcBalance: lrcFee <= lrcBalance;
-    }
-    return true
-}
-// TODO
-function getLrcFee(){
-  let bool = this.isLrcFeeEnough(this.sellFee, this.lrcBalance,this.tokens,this.sellAmount)
-
-  if(bool){
-    // lrcFee is enoungh
-    return '0x' + new BigNumber(this._showAmount(this.sellFee)).times(Number('1e' + this.lrc.digits)).toString(16)
-  }else{
-    return '0x0'
-  }
-}
-
-function generateRawOrder(formInput){
+function orderFormatter(formInput){
   const {
     tokens={},
     tokenb={},
-    sellAmount,
-    sellTotal, // TODO ，why not buyTotal
+    orderAmount,
+    orderTotal,
+    orderPrice,
+    orderType,
   } = formInput
 
-  const raw = {}
-  raw.protocol = utils.getContractAddress()
-  raw.owner = utils.getWalletAddress()
-  raw.tokenS = tokens.address;
-  raw.tokenB = tokenb.address;
-  raw.amountS = toAmount(sellAmount,tokens.digits)
-  raw.amountB = toAmount(sellTotal,tokenb.digits)
-  raw.timestamp = Number((new Date().getTime() / 1000).toFixed(0));
-  raw.ttl = 30 * 24 * 3600;
-  raw.salt = Math.round(Math.random() * 1e8);
-  raw.buyNoMoreThanAmountB = false;
-  raw.lrcFee = getLrcFee()
-  raw.marginSplitPercentage = Number(raw.lrcFee) !==0 ? Number(this.settingsMarginSplit) : 100;
-  return raw;
+  const order = {}
+  order.protocol = utils.getContractAddress()
+  order.owner = utils.getWalletAddress()
+  order.tokenS = tokens.address
+  order.tokenB = tokenb.address
+  if(orderType=='sell'){
+    // TODO formater
+    data.amountS = '0x' + new BigNumber(orderAmount).times(Number('1e' + tokens.digits)).toString(16);
+    data.amountB = '0x' + new BigNumber(new BigNumber(orderAmount).times(orderPrice).times(Number('1e' + tokenb.digits)).toFixed(0)).toString(16);
+  }
+  if(orderType=='buy'){
+    // TODO formatter
+    data.amountS = '0x' + new BigNumber(new BigNumber(orderAmount).times(orderPrice).times(Number('1e' + tokens.digits)).toFixed(0)).toString(16);
+    data.amountB = '0x' + new BigNumber(orderAmount).times(Number('1e' + tokenb.digits)).toString(16);
+  }
+  order.timestamp = Number((new Date().getTime() / 1000).toFixed(0));
+  order.ttl = utils.getTTL();
+  order.salt = Math.round(Math.random() * 1e8);
+  order.buyNoMoreThanAmountB = false;
+  order.lrcFee = utils.getLrcFee() // TODO
+  order.marginSplitPercentage = Number(order.lrcFee) !==0 ? Number(this.settingsMarginSplit) : 100
+  return order;
+
 }
 
 function submitOrder(rawOrder){
@@ -126,8 +61,7 @@ function getApprovedRawTx(token){
     }
 }
 
-
-function token(){
+function Token(order,orderType){
 
   // lrcFee  TODO
   // response TODO
@@ -135,7 +69,8 @@ function token(){
   this.balance = 0
   this.allowance = 0
   this.amountToPay = 0
-  this.amountToApprove
+  this.amountToApprove = 0
+  this.digits = 0
 
   this.setAmountToPay = ()=>{
     if(this.name==='LRC'){
@@ -175,52 +110,13 @@ function token(){
 }
 
 
-function sell(){
-  let order = Order()
+function sell(formInput){
 
-  let token = token()
+  let rawOrder = orderFormatter(formInput)
+  let order = Order(rawOrder)
+  let token = Token(rawOrder)
   let rawTxs = token.generateRawTxs
-
-
-}
-
-
-
-function getAmountToPay(token,lrcFee){
-
-  if(token.name==='LRC'){
-    // amountToPay = Number(amount) + Number(lrcFee);
-    token.amountToPay = new BigNumber(token.amountToPay).plus(lrcFee).plus(response.result) ;
-  }else{
-    token.amountToPay = new BigNumber(token.amountToPay).plus(response.result) ;
-  }
-  return amountToPay
-}
-
-function getAmountToApprove(token){
-
-  if (token.amountToPay.gt(token.allowance) ) {
-      const JAVA_LONG_MAX = '9223372036854775806'
-      token.amountToApprove = new BigNumber(JAVA_LONG_MAX).times(Number('1e'+token.digits))
-  }else{
-      token.amountToApprove = 0 // Do need to approve
-  }
-  return token.amountToApprove
-}
-
-
-
-function generateRawTxs(order){
-  let raws = []
-  if(token.amountToApprove){
-    if(token.allowance>0){
-      const cancelRawTx = getApprovedRawTx(0)
-      raws.push(cancelRawTx)
-    }
-    const toApproveRawTx = getApprovedRawTx(token.amountToApprove) 
-    raws.push(approveRawTx)
-  }
-
+  let bool = utils.isEthGasEnough(rawTxs)
 }
 
 
