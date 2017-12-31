@@ -8,33 +8,72 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function generateRawTxs(formInput){
-	// const formInput = {
-	// 	token={},
-	// 	gasLimit,
-	// 	to,
-	// 	value,
-	// 	data,
-	// }
-	const globalConfig ={
-		gasPrice
+function inputFormatter(formInput){
+	this.tx = {}
+	function setGasLimit(){
+		this.tx.gasLimit = utils.getGasLimit(gasLimit) // TODO
 	}
+	function setGasPrice(){
+		this.tx.gasPrice = utils.getGasLimit() // TODO
+	}
+	function setTo(){
+		if(token.name==='ETH'){
+			this.tx.to = address
+		}else{
+			this.tx.to = utils.getContractAddress(token)
+		}
+	}
+	function setValue(){
+		if(token.name==='ETH'){
+			this.tx.value = utils.getTokenAmount(value)
+		}else{
+			this.tx.value = '0x0'
+		}
+	}
+	function setData(){
+		if(token.name==='ETH'){
+			this.tx.data = additionalData || '0x' // TODO
+		}else{
+			const address,amount // TODO
+			this.tx.data = abis.generateTransferData(address, amount)
+		}
+	}
+}
+
+
+function transfter(formInput){
+	const rawTx = inputFormatter(formInput)
+	const balanceEnough = utils.isBalanceEnough(rawTx,token) // TODO
+	const gasEnough = utils.isEthGasEnough(rawTx)
+	 
+
+}
+
+function generateRawTxs(formInput){
+	let {
+		token={},
+		gasLimit,
+		amount,
+		address,
+		data,
+		additionalData,
+	} = formInput
+
 	let raws = []
 	let rawTx = {}
 
-	rawTx.gasPrice = '0x' + (Number(globalConfig.settingsGasPrice) * 1e9).toString(16) //TODO formatter
-	rawTx.gasLimit = '0x' + Number(formInput.value).toString(16) // TODO
+	rawTx.gasPrice = utils.getGasPrice()
+	rawTx.gasLimit = utils.getGasLimit(gasLimit)
 
 	if(token.name==='ETH'){
-		rawTx.to = formInput.address
-		rawTx.value = '0x' + (Number(formInput.value) * 1e18).toString(16) //TODO formatter
-		rawTx.data = formInput.additionalData || '0x'
+		rawTx.to = address
+		rawTx.value = utils.getTokenAmount(value)
+		rawTx.data = additionalData || '0x'
 	}else{
 		rawTx.to = utils.getContractAddress(token) // TO BE CONFIRMED
 		rawTx.value = '0x0'
 		rawTx.data = abis.generateTransferData(
-			formInut.address, 
-			'0x' + (Number(formInut.value) * Number('1e' + token.digits)).toString(16) // TODO formatter
+			formInut.address, utils.getTokenAmount()
 		) 
 	}
 	balanceValidator(rawTx,token) 

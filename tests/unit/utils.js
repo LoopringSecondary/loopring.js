@@ -35,14 +35,36 @@ export function getWalletAddress(){
   return 'xxx' 
 }
 
-export function getDefaultGasPrice(){
-  const defaultGasPrice
-  return '0x' + (Number(defaultGasPrice) * 1e9).toString(16)
+export function getGasPrice(amount){
+  if(!amount){
+    amount = defaultGasPrice // TODO 
+  }
+  return '0x' + (Number(amount) * 1e9).toString(16)
 }
-export function getDefaultGasLimit(){
-  const defaultGasLimit
-  return '0x' + Number(defaultGasLimit).toString(16) || '0x14820';
+export function getGasLimit(amount){
+  if(!amount){
+    amount = defaultGasLimit // TODO 
+  }
+  return '0x' + Number(amount).toString(16) || '0x14820'; // TODO
 }
+
+export function getAmount(amount,digits){
+  if(!digits){
+    digits = 18
+  }
+  if(!amount){
+   amount = 0
+  }
+  return '0x' + (new BigNumber(amount).times('1e' + digits)).toString(16);
+}
+
+export function getTotalAmount(amount,price,digits){
+  return '0x' + new BigNumber(new BigNumber(amount).times(price).times(Number('1e' + digits)).toFixed(0)).toString(16);
+}
+
+
+
+
 export function getTTL(){
   // TODO
   let ttl = this.appConfig.defaultExpireTime * 24 * 3600;
@@ -57,6 +79,10 @@ export function getTTL(){
   }
   return ttl
 }
+export function getSalt(){
+  return Math.round(Math.random() * 1e8)
+}
+
 
 
 
@@ -71,6 +97,8 @@ export getBalanceOfToken(token){
 }
 
 export function isEthGasEnough(rawTx){
+  // TODO 
+  // 判断 rawTx 是数组还是对象
   const balance = getBalanceOfToken('ETH')
   const need = Number(rawTx.gasLimit) * Number(rawTx.gasPrice)
   if(need>balance){
@@ -79,10 +107,25 @@ export function isEthGasEnough(rawTx){
   }else{
     return true
   }
+
+  // const ETHBalance = this.balances['ETH'] ? this.balances['ETH'].balance : 0;
+  // if (ETHBalance < detail.raws.length *(Number(tx.gasLimit) * Number(tx.gasPrice))) {
+  //     const detail = {
+  //         text: 'You has insufficient ETH balance for gasLimit * gasPrice',
+  //         category: "warning",
+  //         duration: 8000
+  //     };
+  //     this.dispatchEvent(new CustomEvent('notification', {
+  //         bubbles: true,
+  //         composed: true,
+  //         detail: detail
+  //     }));
+  //     return;
+  // }
 }
 
 
-export function isBalanceEnough(token,rawTx){
+export function isBalanceEnough(rawTx,token){
   const balance = getBalanceOfToken(token)
   if(token==='ETH'){
     const need = Number(tx.value) + Number(tx.gasLimit) * Number(tx.gasPrice);
