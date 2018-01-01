@@ -7,93 +7,34 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-
-let checkBalanceForLRC(){
-  // TODO
+function orderFormatter(formInput){
+    // TODO formInput unKnown
+   const {
+    order,
+   } = formInput
+   return {
+     ...order,
+     protocol: getContractAddress(),
+     owner: getWalletAddress(),
+     tokenS: getTokenAddress(tokenS),
+     tokenB: getTokenAddress(tokenB),
+     v: Number(values.v),
+   }
 }
 
-function orderValidator(values){
-  if (!values.tokenS || !values.tokenB) {
-    console.log('token not exist')
-  }
-}
-
-function generateRawOrder(values){
-
-  // let currentVersion = this.settingsVersion;
-  // const contractAddress = this.appConfig.contractVersionMap[currentVersion].address;
-
-  // const target = e.target.order;
-  // let data = {};
-  // data.protocol = contractAddress;
-  // data.owner = this.wallet.address;
-  // data.tokenS = this.appConfig.tokenMap[target.tokenS.toUpperCase()].address;
-  // data.tokenB = this.appConfig.tokenMap[target.tokenB.toUpperCase()].address;
-  // data.amountS = target.amountS;
-  // data.amountB = target.amountB;
-  // data.timestamp = target.timestamp;
-  // data.ttl = target.ttl;
-  // data.salt = target.salt;
-  // data.lrcFee = target.lrcFee;
-  // data.buyNoMoreThanAmountB = target.buyNoMoreThanAmountB;
-  // data.marginSplitPercentage = target.marginSplitPercentage;
-  // data.v = Number(target.v);
-  // data.r = target.r;
-  // data.s = target.s;
-
-  return {
-    ...values,
-    protocol: getContractAddress(),
-    owner: getWalletAddress(),
-    tokenS: getTokenAddress(values.tokenS),
-    tokenB: getTokenAddress(values.tokenB),
-    v: Number(values.v),
-  }
-}
-
-function generateAbiData(method,signedOrder){
-  // TODO 
-  // amountS，amountB 是否在orderSchema中
-  let {
-    owner, tokenS, tokenB,
-    amountS, amountB, timestamp, ttl, salt, lrcFee,
-    buyNoMoreThanAmountB,
-    marginSplitPercentage,
-    v,
-    r,
-    s
-  } = signedOrder
-  const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS;
-  const dataParams = {
-    method:'cancelOrder', // method
-    params: {
-      addresses: [owner, tokenS, tokenB],
-      orderValues: [amountS, amountB, timestamp, ttl, salt, lrcFee, amount],
-      buyNoMoreThanAmountB,
-      marginSplitPercentage,
-      v,
-      r,
-      s
-    },
-  }
-  return abis.generateAbiData(dataParams)
-}
-
-function generateRawTx(rawOrder){
+function rawTxFormatter(rawOrder){
   let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed
-  const abiData = order.generateAbiData('cancelOrder') // TODO
-  const protocol = order.protocol
-  const defaultGasPrice = 'xxx';
-  const gasPrice = '0x' + (Number(defaultGasPrice) * 1e9).toString(16) // TODO formatter
-  
+  const signedOrder = order.order // TODO
+  const abiData = abis.generateCancelOrderData(signedOrder) 
   const rawTx = {
-      to: protocol,
-      gasPrice:gasPrice,
-      gasLimit: '0x14820', // TODO 
-      value: '0x0',
+      to: utils.getContractAddress(),
+      gasPrice:utils.getGasPrice(),
+      gasLimit: utils.toHex(8400), 
+      value: utils.toHex(0),
       data: abiData
   }
+  const isGasEnough = utils.isGasEnough([rawTx])
   return rawTx
 }
 
@@ -103,6 +44,4 @@ async function cancelOrder(rawTx,privateKey){
   await tx.setNonce()
   tx.sign()
   await tx.send()
-  
 }
-

@@ -63,15 +63,16 @@ export function getSalt(){
 }
 
 // getter
+
 export function getContractAddress(){
   // const spender = this.appConfig.delegateAddress;
   // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return ’xxx‘;
+  return 'xxx';
 }
 export function getDelegateAddress(){
   // const spender = this.appConfig.delegateAddress;
   // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return ’xxx‘;
+  return 'xxx';
 }
 
 export function getWalletAddress(){
@@ -85,18 +86,11 @@ export function getTokenByAddress(address){
   // TODO
   return {} 
 }
-export function getTokenAddress(token){
-  // TODO
+export function getTokenAddress(tokenName){
+  //  tip
+  // const detail = { text: 'Token contract address is missing, please contact to the administrators to make up for ' + target.tokenS.toUpperCase() + ' and ' + target.tokenB.toUpperCase() + ' contract Address', category: "error", duration: 8000 }
   return 'xxx'
 }
-
-
-
-
-
-
-
-
 export getBalanceOfToken(token){
   // const balances = _.keyBy(this.balancesRaw.result.tokens, 'token');
   // const balance = balances[this.tokenb.token.toUpperCase()] ? Number(balances[this.tokenb.token.toUpperCase()].balance) : 0;
@@ -107,7 +101,7 @@ export getBalanceOfToken(token){
     // 需不需要异步查询一下余额呢？
 }
 
-export function isEthGasEnough(rawTx){
+export function isGasEnough(rawTxs){
   // TODO 
   // 判断 rawTx 是数组还是对象
   const balance = getBalanceOfToken('ETH')
@@ -118,6 +112,9 @@ export function isEthGasEnough(rawTx){
   }else{
     return true
   }
+  // if (new BigNumber(this.fromTokenBalance.balance).lt(new BigNumber(tx.value).plus(new BigNumber(tx.gasLimit).times(Number(tx.gasPrice))))) {
+
+  // }
 
   // const ETHBalance = this.balances['ETH'] ? this.balances['ETH'].balance : 0;
   // if (ETHBalance < detail.raws.length *(Number(tx.gasLimit) * Number(tx.gasPrice))) {

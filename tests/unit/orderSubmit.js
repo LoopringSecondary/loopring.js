@@ -23,12 +23,12 @@ function orderFormatter(formInput){
   order.tokenS = tokens.address
   order.tokenB = tokenb.address
   if(orderType=='sell'){
-    data.amountS = utils.getAmount(orderAmount,tokens.digits)
-    data.amountB = utils.getTotalAmount(orderAmount,orderPrice,tokenb.digits)
+    order.amountS = utils.getAmount(orderAmount,tokens.digits)
+    order.amountB = utils.getTotalAmount(orderAmount,orderPrice,tokenb.digits)
   }
   if(orderType=='buy'){
-    data.amountS = utils.getTotalAmount(orderAmount,orderPrice,tokens.digits)
-    data.amountB = utils.getAmount(orderAmount,tokenb.digits)
+    order.amountS = utils.getTotalAmount(orderAmount,orderPrice,tokens.digits)
+    order.amountB = utils.getAmount(orderAmount,tokenb.digits)
   }
   order.timestamp = Number((new Date().getTime() / 1000).toFixed(0));
   order.ttl = utils.getTTL();

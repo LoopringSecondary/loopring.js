@@ -13,19 +13,20 @@ function convert(formInput){
   let rawTx = {}
   let raws = []
   let weth = utils.getTokenByName('WETH')
-  rawTx.to = weth.address
+  rawTx.to = weth.address // TODO why ?
   rawTx.gasPrice = utils.getGasPrice()
   rawTx.gasLimit = utils.getGasLimit(gasLimit)
 
   if(fromToken === 'ETH'){
   	rawTx.value = utils.getAmount(amount)
-  	rawTx.data = '0xd0e30db0' // TODO ?
+  	rawTx.data = '0xd0e30db0' // TODO why ?
   }else{
   	rawTx.value = utils.getAmount(0)
   	amount = utils.getAmount(amount,weth.digits)
   	rawTx.data = signer.generateWithdrawData(amount)
   }
   raws.push(rawTx)
+  let isGasEnough = utils.isGasEnough(rawTx)
   return raws
 }
 function sendRelatedRawTxs(){

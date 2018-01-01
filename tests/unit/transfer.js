@@ -8,46 +8,7 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function inputFormatter(formInput){
-	this.tx = {}
-	function setGasLimit(){
-		this.tx.gasLimit = utils.getGasLimit(gasLimit) // TODO
-	}
-	function setGasPrice(){
-		this.tx.gasPrice = utils.getGasLimit() // TODO
-	}
-	function setTo(){
-		if(token.name==='ETH'){
-			this.tx.to = address
-		}else{
-			this.tx.to = utils.getContractAddress(token)
-		}
-	}
-	function setValue(){
-		if(token.name==='ETH'){
-			this.tx.value = utils.getTokenAmount(value)
-		}else{
-			this.tx.value = '0x0'
-		}
-	}
-	function setData(){
-		if(token.name==='ETH'){
-			this.tx.data = additionalData || '0x' // TODO
-		}else{
-			const address,amount // TODO
-			this.tx.data = abis.generateTransferData(address, amount)
-		}
-	}
-}
-
-
-function transfter(formInput){
-	const rawTx = inputFormatter(formInput)
-	const balanceEnough = utils.isBalanceEnough(rawTx,token) // TODO
-	const gasEnough = utils.isEthGasEnough(rawTx)
-}
-
-function generateRawTxs(formInput){
+function toTx(formInput){
 	let {
 		token={},
 		gasLimit,
@@ -56,49 +17,68 @@ function generateRawTxs(formInput){
 		data,
 		additionalData,
 	} = formInput
-
-	let raws = []
 	let rawTx = {}
-
-	rawTx.gasPrice = utils.getGasPrice()
-	rawTx.gasLimit = utils.getGasLimit(gasLimit)
-
-	if(token.name==='ETH'){
-		rawTx.to = address
-		rawTx.value = utils.getAmount(value)
-		rawTx.data = additionalData || '0x'
-	}else{
-		rawTx.to = utils.getContractAddress(token) // TO BE CONFIRMED
-		rawTx.value = '0x0'
-		rawTx.data = abis.generateTransferData(
-			formInut.address, utils.getAmount(amount)
-		) 
+	function setGasLimit(){
+		rawTx.gasLimit = utils.getGasLimit(gasLimit) // TODO
 	}
-	balanceValidator(rawTx,token) 
-	gasValidator(token)
-	raws.push(rawTx)
-	return raws
+	function setGasPrice(){
+		rawTx.gasPrice = utils.getGasPrice() 
+	}
+	function setTo(){
+		if(token.name==='ETH'){
+			rawTx.to = address
+		}else{
+			rawTx.to = utils.getContractAddress(token) // TODO
+		}
+	}
+	function setValue(){
+		if(token.name==='ETH'){
+			rawTx.value = utils.getAmount(amount)
+		}else{
+			rawTx.value = utils.getAmount(0)
+		}
+	}
+	function setData(){
+		if(token.name==='ETH'){
+			rawTx.data = additionalData || '0x'
+		}else{
+			const amountToTransfer = utils.getAmount(amount,token.digits)
+			rawTx.data = abis.generateTransferData(address, amountToTransfer)
+		}
+	}
+	function isBlanceEnough(){
+		// TODO  validator
+		let isGasEnough = utils.isBlanceEnough(rawTx,token)
+	}
+	function isGasEnough(){
+		// TODO  validator
+		let isGasEnough = utils.isGasEnough(rawTx)
+	}
+	setGasLimit()
+	setGasPrice()
+	setTo()
+	setValue()
+	setData() 
+	return rawTx
 }
 
-async function transferStart(rawTx,address,privateKey,amount,tag){
-    // let abiDataParams = {
-    //   method:'transfer',
-    //   address:address,
-    //   amount: amount
-    // }
-    // let nonceParams = [
-    //   address,
-    //   tag,
-    // ]
-    tx = new Transaction(rawTx)
-    // tx.setData(abiDataParams)
-    // await tx.setNonce(...nonceParams) // setNonce 是的参数 address ，是什么 address ？
-    tx.sign(privateKey)
-    return tx
+function validator(){
+	// TODO
+	const isBalanceEnough = utils.isBalanceEnough(rawTx,token) // TODO
+	const isGasEnough = utils.isGasEnough(rawTx)
 }
 
-async function transfer(){
-	 let tx = await transferStart()
+async function transfer(formInput){
+	const rawTx = toRawTx(formInput)
+	validator() // TODO
+	let tx = new Transaction(rawTx)
+	tx.sign(privateKey)
+	const nonceParams=[]
+	await tx.setNonce(...nonceParams) // TODO setNonce 是的参数 address ，是什么 address ？
+	return tx
+}
+async function transferSend(){
+	 let tx = await transfer()
 	 let res = await tx.send()
 }
 

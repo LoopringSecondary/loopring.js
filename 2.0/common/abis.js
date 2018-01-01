@@ -7,9 +7,22 @@ export const solSHA3 = (types, data) =>
     return hash;
 };
 
-export const generateCancelOrderData = (order) =>
+export const generateCancelOrderData = (signedOrder) =>
 {
-    // TODO order type
+    // TODO signedOrder schema 
+    // amountS，amountB 是否在orderSchema中
+    let {
+        owner, tokenS, tokenB,
+        amountS, amountB, timestamp, ttl, salt, lrcFee,
+        buyNoMoreThanAmountB,
+        marginSplitPercentage,
+        v,
+        r,
+        s
+    } = signedOrder
+    const addresses = [owner, tokenS, tokenB]
+    const amount = signedOrder.buyNoMoreThanAmountB ? signedOrder.amountB : signedOrder.amountS
+    const orderValues = [amountS, amountB, timestamp, ttl, salt, lrcFee, amount]
     const data = abi.rawEncode([
         'address[3]',
         'uint[7]',
@@ -19,11 +32,13 @@ export const generateCancelOrderData = (order) =>
         'bytes32',
         'bytes32'
     ], [
-        order.addresses,
-        order.orderValues,
-        order.buyNoMoreThanAmountB,
-        order.marginSplitPercentage,
-        order.v, order.r, order.s
+        addresses,
+        orderValues,
+        buyNoMoreThanAmountB,
+        marginSplitPercentage,
+        v, 
+        r, 
+        s
     ]).toString('hex');
 
     const method = abi.methodID(
