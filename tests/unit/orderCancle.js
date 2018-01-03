@@ -2,40 +2,65 @@
 import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
+import Order from '../../2.0/order'
 import Loopring from '../../2.0/loopring'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function orderFormatter(formInput){
+function toRawOrder(formInput){
     // TODO formInput unKnown
    const {
     order,
    } = formInput
    return {
      ...order,
-     protocol: getContractAddress(),
-     owner: getWalletAddress(),
-     tokenS: getTokenAddress(tokenS),
-     tokenB: getTokenAddress(tokenB),
+     protocol: utils.getContractAddress(),
+     owner: utils.getWalletAddress(),
+     tokenS: utils.getTokenAddress(tokenS),// TODO
+     tokenB: utils.getTokenAddress(tokenB),// TODO
      v: Number(values.v),
    }
 }
+
+
+function toRawTx(signedOrder){
+  // TODO signedOrder
+  let rawTx = {}
+  function setGasLimit(){
+    rawTx.gasLimit = utils.getGasLimit()  // TO Confrim 8400 ?
+  }
+  function setGasPrice(){
+    rawTx.gasPrice = utils.getGasPrice() 
+  }
+  function setTo(){
+    rawTx.to = utils.getContractAddress()
+  }
+  function setValue(){
+    rawTx.value = utils.getAmount(0)
+  }
+  function setData(){
+    abis.generateCancelOrderData(signedOrder) 
+  }
+  setGasLimit()
+  setGasPrice()
+  setTo()
+  setValue()
+  setData()
+  retrun rawTx
+}
+
+function toRawTxs(){
+  // TODO
+}
+
+
 
 function rawTxFormatter(rawOrder){
   let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed
   const signedOrder = order.order // TODO
-  const abiData = abis.generateCancelOrderData(signedOrder) 
-  const rawTx = {
-      to: utils.getContractAddress(),
-      gasPrice:utils.getGasPrice(),
-      gasLimit: utils.toHex(8400), 
-      value: utils.toHex(0),
-      data: abiData
-  }
-  const isGasEnough = utils.isGasEnough([rawTx])
-  return rawTx
+  const rawTx = t
 }
 
 async function cancelOrder(rawTx,privateKey){

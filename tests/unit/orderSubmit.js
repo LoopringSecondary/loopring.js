@@ -7,7 +7,7 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function orderFormatter(formInput){
+function toOrder(formInput){
   const {
     tokens={},
     tokenb={},
@@ -46,75 +46,90 @@ function submitOrder(rawOrder){
   return order.submit()
 }
 
-function getApprovedRawTx(token){
-    const spender = utils.getDelegateAddress()
-    const amountToApprove = token.amountToApprove
-    // amountToApprove = '0x' + Number(amountToApprove).toString(16)
-    return {
-      gasLimit: utils.getDefaultGasLimit(),
-      gasPrice: utils.getDefaultGasPrice(),
-      to: token.address,
-      value: '0x0',
-      data: abi.generateApproveData(spender,amountToApprove)
-    }
-}
 
-function Token(order,orderType){
 
-  // lrcFee  TODO
-  // response TODO
+function toToken(){
   this.name = ''
   this.balance = 0
   this.allowance = 0
-  this.amountToPay = 0
-  this.amountToApprove = 0
   this.digits = 0
+}
 
-  this.setAmountToPay = ()=>{
-    if(this.name==='LRC'){
-      // amountToPay = Number(amount) + Number(lrcFee);
-      this.amountToPay = new BigNumber(this.amountToPay).plus(lrcFee).plus(response.result) ;
-    }else{
-      this.amountToPay = new BigNumber(this.amountToPay).plus(response.result) ;
-    }
+
+function toRawTx(formInput){
+  let {
+    token,
+    gasLimit,
+    amount,
+  } = formInput
+
+  let rawTx = {}
+
+  function setGasLimit(){
+    rawTx.gasLimit = utils.getGasLimit(gasLimit) 
   }
-  
-  this.setAmountToPay()
-
-  this.setAmountToApprove = ()=>{
-    if (this.amountToPay.gt(this.allowance) ) {
+  function setGasPrice(){
+    rawTx.gasPrice = utils.getGasPrice() 
+  }
+  function setTo(){
+    rawTx.to = token.address
+  }
+  function setValue(){
+    rawTx.value = utils.getAmount(0)
+  }
+  function setData(){
+    if(token.name==='LRC'){
+      const amountToPay = utils.toBigNumber(amount).plus(lrcFee).plus(response.result) // TODO response
+    }else{
+      const amountToPay = utils.toBigNumber(amount).plus(response.result) // TODO response
+    }
+    if (amountToPay.gt(token.allowance) ) {
         const JAVA_LONG_MAX = '9223372036854775806'
-        this.amountToApprove = new BigNumber(JAVA_LONG_MAX).times(Number('1e'+this.digits))
+        let amountToApprove = utils.toBigNumber(JAVA_LONG_MAX,token.digits)
     }else{
-        this.amountToApprove = 0 
-        // Do need to approve
+        let amountToApprove = 0
     }
-  }
-
-  this.setAmountToApprove()
-
-  this.generateRawTxs = ()=>{
-    let raws = []
-    if(this.amountToApprove){
-      if(this.allowance>0){
-        const cancelRawTx = getApprovedRawTx(0)
-        raws.push(cancelRawTx)
-      }
-      const toApproveRawTx = getApprovedRawTx(this.amountToApprove) 
-      raws.push(toApproveRawTx)
+    if(type=='cancel'){
+      amountToApprove = 0
     }
-    return raws
+    amountToApprove = utils.getAmount(amountToApprove,token.digits)
+    const spender = utils.getDelegateAddress()
+    rawTx.data = abis.generateApproveData(spender,amountToApprove)
   }
+  setGasLimit()
+  setGasPrice()
+  setTo()
+  setValue()
+  setData()
+  retrun rawTx
+}
+
+function toRawTxs(){
+  let {
+    token,
+    amount,
+  } = formInput
+  
+  let rawTxs = []
+  if(token.allowance > 0){
+    const cancelTx = toRawTx(fromInput,'cancel')
+    rawTxs.push(cancelTx)
+  }
+  const approveTx = toRawTx(fromInput)
+  rawTxs.push(approveTx)
+  
+  let isGasEnough = utils.isGasEnough(rawTxs)
+  // TODO
+  return rawTxs
 }
 
 
 function sell(formInput){
 
-  let rawOrder = orderFormatter(formInput)
-  let order = Order(rawOrder)
-  let token = Token(rawOrder)
-  let rawTxs = token.generateRawTxs
+  let rawOrder = toOrder(formInput)
+  let rawTxs = toRawTxs(formInput)
   let bool = utils.isEthGasEnough(rawTxs)
+  let order = Order(rawOrder)
 }
 
 

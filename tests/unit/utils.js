@@ -12,11 +12,22 @@ export function toQuantity(){
   
 }
 
-export function toAmount(){
+export function toAmount(amount,digits){
   // data.amountS = '0x' + new BigNumber(this.sellAmount).times(Number('1e' + this.tokens.digits)).toString(16);
   // data.amountB = '0x' + new BigNumber(new BigNumber(this.sellAmount).times(this.sellPrice).times(Number('1e' + this.tokenb.digits)).toFixed(0)).toString(16);
   return '0x' + new BigNumber(amount).times(Number('1e' + digits)).toString(16)
+  // new BigNumber(JAVA_LONG_MAX).times(Number('1e'+ token.digits))
 }
+
+export function toBigNumber(amount,digits){
+  if(digits){
+    return new BigNumber(amount).times(Number('1e'+ token.digits))
+  }else{
+    return new BigNumber(amount)
+  }
+}
+
+
 export function getGasPrice(amount){
   if(!amount){
     amount = defaultGasPrice // TODO 
