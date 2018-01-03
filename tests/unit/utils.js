@@ -12,12 +12,6 @@ export function toQuantity(){
   
 }
 
-export function toAmount(amount,digits){
-  // data.amountS = '0x' + new BigNumber(this.sellAmount).times(Number('1e' + this.tokens.digits)).toString(16);
-  // data.amountB = '0x' + new BigNumber(new BigNumber(this.sellAmount).times(this.sellPrice).times(Number('1e' + this.tokenb.digits)).toFixed(0)).toString(16);
-  return '0x' + new BigNumber(amount).times(Number('1e' + digits)).toString(16)
-  // new BigNumber(JAVA_LONG_MAX).times(Number('1e'+ token.digits))
-}
 
 export function toBigNumber(amount,digits){
   if(digits){
@@ -45,10 +39,12 @@ export function getAmount(amount,digits){
   if(!digits){
     digits = 18
   }
-  if(!amount){
-   amount = 0
+  if(amount){
+   return '0x' + (new BigNumber(amount).times('1e' + digits)).toString(16)
+  }else{
+    return '0x0'
   }
-  return '0x' + (new BigNumber(amount).times('1e' + digits)).toString(16);
+  
 }
 
 export function getTotalAmount(amount,price,digits){

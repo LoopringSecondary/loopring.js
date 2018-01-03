@@ -7,7 +7,7 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function toOrder(formInput){
+function toRawOrder(orderInput){
   const {
     tokens={},
     tokenb={},
@@ -15,7 +15,7 @@ function toOrder(formInput){
     orderTotal,
     orderPrice,
     orderType,
-  } = formInput
+  } = orderInput
 
   const order = {}
   order.protocol = utils.getContractAddress()
@@ -30,7 +30,7 @@ function toOrder(formInput){
     order.amountS = utils.getTotalAmount(orderAmount,orderPrice,tokens.digits)
     order.amountB = utils.getAmount(orderAmount,tokenb.digits)
   }
-  order.timestamp = Number((new Date().getTime() / 1000).toFixed(0));
+  order.timestamp = Number((new Date().getTime() / 1000).toFixed(0))
   order.ttl = utils.getTTL();
   order.salt = Math.round(Math.random() * 1e8);
   order.buyNoMoreThanAmountB = false;
@@ -56,17 +56,15 @@ function toToken(){
 }
 
 
-function toRawTx(formInput){
-  let {
-    token,
-    gasLimit,
-    amount,
-  } = formInput
+function toRawTx(orderInput){
+  const amount = getOrderAmount(orderInput)
+  const token = getOrderToken(orderInput)
+  const lrcFee = getOrderLrcFee(orderInput)
 
   let rawTx = {}
 
   function setGasLimit(){
-    rawTx.gasLimit = utils.getGasLimit(gasLimit) 
+    rawTx.gasLimit = utils.getGasLimit() 
   }
   function setGasPrice(){
     rawTx.gasPrice = utils.getGasPrice() 

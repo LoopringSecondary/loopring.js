@@ -8,7 +8,7 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function toRawTx(formInput,type){
+function toRawTx(formInput){
   let {
     token,
     gasLimit,
