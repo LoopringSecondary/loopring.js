@@ -3,12 +3,13 @@ import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Loopring from '../../2.0/loopring'
+import utils from './utils'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function toTx(formInput){
+function toRawTx(formInput){
 	let {
 		token={},
 		gasLimit,
@@ -46,40 +47,38 @@ function toTx(formInput){
 			rawTx.data = abis.generateTransferData(address, amountToTransfer)
 		}
 	}
-	function isBlanceEnough(){
-		// TODO  validator
-		let isGasEnough = utils.isBlanceEnough(rawTx,token)
-	}
-	function isGasEnough(){
-		// TODO  validator
-		let isGasEnough = utils.isGasEnough(rawTx)
-	}
+	utils.isBalanceEnough(rawTx,token)
+
 	setGasLimit()
 	setGasPrice()
 	setTo()
 	setValue()
-	setData() 
-	return rawTx
+	setData()
+	retrun rawTx
 }
 
-function validator(){
+function toRawTxs(formInput){
+	let rawTxs = []
+	const rawTx = toRawTx(fromInput)
+	rawTxs.push(rawTx)
+	const isBalanceEnough = utils.isBalanceEnough(rawTx,token)
 	// TODO
-	const isBalanceEnough = utils.isBalanceEnough(rawTx,token) // TODO
-	const isGasEnough = utils.isGasEnough(rawTx)
+	let isGasEnough = utils.isGasEnough(rawTxs)
+	// TODO
+	return rawTxs
 }
 
 async function transfer(formInput){
-	const rawTx = toRawTx(formInput)
-	validator() // TODO
-	let tx = new Transaction(rawTx)
-	tx.sign(privateKey)
-	const nonceParams=[]
-	await tx.setNonce(...nonceParams) // TODO setNonce 是的参数 address ，是什么 address ？
-	return tx
+	const rawTxs = toRawTxs(formInput)
+	// let tx = new Transaction(rawTx)
+	// tx.sign(privateKey)
+	// const nonceParams=[]
+	// await tx.setNonce(...nonceParams) // TO Be Confirm
+	// return tx
 }
 async function transferSend(){
-	 let tx = await transfer()
-	 let res = await tx.send()
+	 // let tx = await transfer()
+	 // let res = await tx.send()
 }
 
 

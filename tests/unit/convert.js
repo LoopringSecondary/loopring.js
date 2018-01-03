@@ -3,32 +3,62 @@ import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Loopring from '../../2.0/loopring'
+import utils from './utils'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function convert(formInput){
-  let { gasLimit,amount,fromToken } = formInput
-  let rawTx = {}
-  let raws = []
-  let weth = utils.getTokenByName('WETH')
-  rawTx.to = weth.address // TODO why ?
-  rawTx.gasPrice = utils.getGasPrice()
-  rawTx.gasLimit = utils.getGasLimit(gasLimit)
+function toRawTx(formInput){
+	let {
+		fromToken,
+		gasLimit,
+		amount,
+	} = formInput
 
-  if(fromToken === 'ETH'){
-  	rawTx.value = utils.getAmount(amount)
-  	rawTx.data = '0xd0e30db0' // TODO why ?
-  }else{
-  	rawTx.value = utils.getAmount(0)
-  	amount = utils.getAmount(amount,weth.digits)
-  	rawTx.data = signer.generateWithdrawData(amount)
-  }
-  raws.push(rawTx)
-  let isGasEnough = utils.isGasEnough(rawTx)
-  return raws
+	let rawTx = {}
+	let wethToken = utils.getTokenByName('WETH') // TODO
+
+	function setGasLimit(){
+		rawTx.gasLimit = utils.getGasLimit(gasLimit) 
+	}
+	function setGasPrice(){
+		rawTx.gasPrice = utils.getGasPrice() 
+	}
+	function setTo(){
+		rawTx.to = wethToken.address
+	}
+	function setValue(){
+		if(fromToken === 'ETH'){
+			rawTx.value = utils.getAmount(amount)
+		}else{
+			rawTx.value = utils.getAmount(0)
+		}
+	}
+	function setData(){
+		if(fromToken === 'ETH'){
+			rawTx.data = '0xd0e30db0' // TODO why ?
+		}else{
+			amount = utils.getAmount(amount,wethToken.digits)
+			rawTx.data = abis.generateWithdrawData(amount)
+		}
+	}
+	setGasLimit()
+	setGasPrice()
+	setTo()
+	setValue()
+	setData()
+	retrun rawTx
 }
+
+function toRawTxs(formInput){
+	let rawTxs = []
+	let rawTx = toRawTx(formInput)
+	rawTxs.push(rawTx)
+	let isGasEnough = utils.isGasEnough(rawTx)
+	return rawTxs
+}
+
 function sendRelatedRawTxs(){
   // TODO
 }
