@@ -16,11 +16,20 @@ export function computeLrcFee(orderInput){
   return orderTotal * lrcPercentage
 }
 
-function isLrcGasEnough(orderInput) {
+function isBalanceEnough(tokenName,amount){
+  const balance = utils.getBalanceByTokenName(tokenName)
+  return amount <= balance
+}
+function isAllowanceEnough(tokenName,amount){
+  const allowance = utils.getAllowanceByTokenName(tokenName)
+  return amount <= allowance
+}
+
+function isLrcFeeEnough(orderInput) {
     const lrcFee = computeLrcFee(orderInput)
     const amountToPay = getBalanceOfToken(orderInput)
     const token = utils.getBalanceOfToken(token)
-    const lrcBalance = utils.getBalanceOfToken('LRC')
+    
 
     if( token.name === "LRC"){
       return amountToPay <= lrcBalance
@@ -28,6 +37,9 @@ function isLrcGasEnough(orderInput) {
       return lrcFee <= lrcBalance
     }
 }
+
+
+
 
 // for set order.lrcFee 
 function getLrcFee(orderInput){
@@ -89,7 +101,7 @@ export function getAmountToPay(orderInput){
 
   return amountToPay
 }
-export function getAmountToPay(orderInput){
+export function getAmountToApprove(orderInput){
 
   const {
     tokens={},
