@@ -58,6 +58,11 @@ export function getTokenToPay(orderInput){
     return tokens 
   }
 }
+
+export function getAmountAllocated(){
+  // TODO
+  // await relay.getEstimatedAllocatedAllowance(this.wallet.address, tokens.token )
+}
 export function getAmountToPay(orderInput){
   const {
     tokens={},
@@ -74,11 +79,12 @@ export function getAmountToPay(orderInput){
     let amountToPay = orderTotal 
   }
   const lrcFee = getLrcFee(orderInput)
+  const amountAllocated = getAmountAllocated(orderInput)
 
   if(token.name==='LRC'){
-    amountToPay = utils.toBigNumber(amount).plus(lrcFee).plus(response.result) // TODO response
+    amountToPay = utils.toBigNumber(amountToPay).plus(lrcFee).plus(amountAllocated) 
   }else{
-    amountToPay = utils.toBigNumber(amount).plus(response.result) // TODO response
+    amountToPay = utils.toBigNumber(amountToPay).plus(amountAllocated) 
   }
 
   return amountToPay
