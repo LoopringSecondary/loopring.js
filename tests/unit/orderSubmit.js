@@ -3,40 +3,24 @@ import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Loopring from '../../2.0/loopring'
+import orderValidator from './orderValidator'
+import orderFormatter from './orderFormatter'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function toRawOrder(orderInput){
-  const {
-    tokens={},
-    tokenb={},
-    orderAmount,
-    orderTotal,
-    orderPrice,
-    orderType,
-  } = orderInput
-
-  const order = {}
-  order.protocol = utils.getContractAddress()
-  order.owner = utils.getWalletAddress()
-  order.tokenS = tokens.address
-  order.tokenB = tokenb.address
-  if(orderType=='sell'){
-    order.amountS = utils.getAmount(orderAmount,tokens.digits)
-    order.amountB = utils.getTotalAmount(orderAmount,orderPrice,tokenb.digits)
+function submitPrepare(formInput){
+  let rawOrder = orderFormatter(formInput)
+  let validator = new orderValidator(rawOrder)
+  if(validator.isTokenAllowanceEnough()){
+      validator.generateApproveTxs()
   }
-  if(orderType=='buy'){
-    order.amountS = utils.getTotalAmount(orderAmount,orderPrice,tokens.digits)
-    order.amountB = utils.getAmount(orderAmount,tokenb.digits)
+  if(validator.isLrcAllowanceEnough()){
+      validator.generateLrcApproveTxs()
   }
-  order.timestamp = Number((new Date().getTime() / 1000).toFixed(0))
-  order.ttl = utils.getTTL();
-  order.salt = Math.round(Math.random() * 1e8);
-  order.buyNoMoreThanAmountB = false;
-  order.lrcFee = utils.getLrcFee() // TODO
-  order.marginSplitPercentage = Number(order.lrcFee) !==0 ? Number(this.settingsMarginSplit) : 100
-  return order;
+  if(validator.isEthGasEnough()){
+    
+  }
 
 }
 
@@ -60,6 +44,7 @@ function toRawTx(orderInput){
   const amount = getOrderAmount(orderInput)
   const token = getOrderToken(orderInput)
   const lrcFee = getOrderLrcFee(orderInput)
+  cosnt 
 
   let rawTx = {}
 
