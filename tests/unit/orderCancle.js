@@ -24,38 +24,6 @@ function toRawOrder(formInput){
 }
 
 
-function toRawTx(signedOrder){
-  // TODO signedOrder
-  let rawTx = {}
-  function setGasLimit(){
-    rawTx.gasLimit = utils.getGasLimit()  // TO Confrim 8400 ?
-  }
-  function setGasPrice(){
-    rawTx.gasPrice = utils.getGasPrice() 
-  }
-  function setTo(){
-    rawTx.to = utils.getContractAddress()
-  }
-  function setValue(){
-    rawTx.value = utils.getAmount(0)
-  }
-  function setData(){
-    abis.generateCancelOrderData(signedOrder) 
-  }
-  setGasLimit()
-  setGasPrice()
-  setTo()
-  setValue()
-  setData()
-  retrun rawTx
-}
-
-function toRawTxs(){
-  // TODO
-}
-
-
-
 function rawTxFormatter(rawOrder){
   let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed

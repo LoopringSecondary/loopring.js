@@ -5,21 +5,35 @@ import Transaction from '../../2.0/transaction'
 import Loopring from '../../2.0/loopring'
 import orderValidator from './orderValidator'
 import orderFormatter from './orderFormatter'
+import txFormatter from './txFormatter'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function submitPrepare(formInput){
-  let rawOrder = orderFormatter(formInput)
+function submitPrepare(orderInput){
+  let rawOrder = orderFormatter(orderInput)
   let validator = new orderValidator(rawOrder)
-  if(validator.isTokenAllowanceEnough()){
-      validator.generateApproveTxs()
+  if(!validator.isTokenAllowanceEnough()){
+      let  txInput = {
+        amount:validator.amountToApprove,
+        token:validator.tokenToPay,
+      }
+      if(validator.tokenToPay.allowance > 0){
+          txInput.amount = 0
+          const canelRawTx = new txFormatter('approve',txInput)
+      }
+      const approveRawTx = new txFormatter('approve',txInput)
+
   }
   if(validator.isLrcAllowanceEnough()){
-      validator.generateLrcApproveTxs()
+      const txInput = {
+        amount:validator.lrcFee,
+        token:utils.getTokenByName('LRC'), //TODO
+      }
+      const tx = new txFormatter('approve',txInput)
   }
   if(validator.isEthGasEnough()){
-    
+
   }
 
 }

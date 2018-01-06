@@ -9,63 +9,21 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function toRawTx(formInput,type){
-	let {
-		token,
-		gasLimit,
-		amount,
-	} = formInput
-
-	let rawTx = {}
-	function setGasLimit(){
-		rawTx.gasLimit = utils.getGasLimit(gasLimit) 
+function approveStart(approveTxInput){
+	const tx = new txFormatter('approve',approveTxInput)
+	const isCancleNeeded = true // TODO
+	if(tx.isCancleNeeded){
+		const cancelTx = new txFormatter('approveCancel',approveTxInput)
+		const txs = new txsFormatter([tx,cancelTx])
+	}else{
+		const txs = new txsFormatter([tx])
 	}
-	function setGasPrice(){
-		rawTx.gasPrice = utils.getGasPrice() 
+	if(!txs.isEThGasEnough()){
+		// do sth likes trigger a notification
+	}else{
+		txs.sign() // TODO
+		txs.send() // TODO
 	}
-	function setTo(){
-		rawTx.to = token.address
-	}
-	function setValue(){
-		rawTx.value = utils.getAmount(0)
-	}
-	function setData(){
-		if(type == 'cancel'){
-			const amount = 0
-		}
-		const spender = utils.getDelegateAddress()
-		const amountToApprove = utils.getAmount(amount,token.digits)
-		rawTx.data = abis.generateTransferData(spender, amountToApprove)
-	}
-	setGasLimit()
-	setGasPrice()
-	setTo()
-	setValue()
-	setData()
-	retrun rawTx
-}
-
-function toRawTxs(){
-	let {
-		token,
-		amount,
-	} = formInput
-	
-	let rawTxs = []
-	if(token.allowance > 0){
-		const cancelTx = toRawTx(fromInput,'cancel')
-		rawTxs.push(cancelTx)
-	}
-	const approveTx = toRawTx(fromInput)
-	rawTxs.push(approveTx)
-	
-	let isGasEnough = utils.isGasEnough(rawTxs)
-	// TODO
-	return rawTxs
-}
-
-function approve(formInput){
-	let rawsTxs = toRawTxs(formInput)
 }
 
 

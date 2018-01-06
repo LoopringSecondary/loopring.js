@@ -60,7 +60,6 @@ export default class OrderValidator {
   isTokenAllowanceEnough(){
     return this.amountToPay <= this.tokenToPay.allowance
   }
-
   isLrcAllowanceEnough(){
     const lrcBalance = utils.getBalanceByTokenName('LRC')
     return this.order.lrcFee <= lrcBalance
@@ -69,6 +68,14 @@ export default class OrderValidator {
     
   }
   generaterTxs(){
-    
+    let  txInput = {
+      amount:this.amountToApprove,
+      token:this.tokenToPay,
+    }
+    if(validator.tokenToPay.allowance > 0){
+        txInput.amount = 0
+        const canelRawTx = new txFormatter('approve',txInput)
+    }
+    const approveRawTx = new txFormatter('approve',txInput)
   }
 }

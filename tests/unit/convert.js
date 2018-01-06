@@ -9,48 +9,6 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function toRawTx(formInput){
-	let {
-		fromToken,
-		gasLimit,
-		amount,
-	} = formInput
-
-	let rawTx = {}
-	let wethToken = utils.getTokenByName('WETH') // TODO
-
-	function setGasLimit(){
-		rawTx.gasLimit = utils.getGasLimit(gasLimit) 
-	}
-	function setGasPrice(){
-		rawTx.gasPrice = utils.getGasPrice() 
-	}
-	function setTo(){
-		rawTx.to = wethToken.address
-	}
-	function setValue(){
-		if(fromToken === 'ETH'){
-			rawTx.value = utils.getAmount(amount)
-		}else{
-			rawTx.value = utils.getAmount(0)
-		}
-	}
-	function setData(){
-		if(fromToken === 'ETH'){
-			rawTx.data = '0xd0e30db0' // TODO why ?
-		}else{
-			amount = utils.getAmount(amount,wethToken.digits)
-			rawTx.data = abis.generateWithdrawData(amount)
-		}
-	}
-	setGasLimit()
-	setGasPrice()
-	setTo()
-	setValue()
-	setData()
-	retrun rawTx
-}
-
 function toRawTxs(formInput){
 	let rawTxs = []
 	let rawTx = toRawTx(formInput)
@@ -59,8 +17,17 @@ function toRawTxs(formInput){
 	return rawTxs
 }
 
-function sendRelatedRawTxs(){
-  // TODO
+function convertStart(convertTxInput){
+	const txformatter = new txFormatter('convert',convertTxInput)
+	const txs = new txsFormatter([tx])
+	if(!tx.isBalanceEnough()){
+		// do sth likes trigger a notification
+	}
+	if(!txs.isEThGasEnough()){
+		// do sth likes trigger a notification
+	}else{
+		txs.sign() // TODO
+		txs.send() // TODO
+	}
 }
-
 
