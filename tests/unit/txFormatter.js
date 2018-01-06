@@ -4,23 +4,23 @@ import Transaction from '../../2.0/transaction'
 import utils from './utils'
 
 const approveTxInput = {
-	token,
-	amount,
+	// token,
+	// amount,
 }
 const transferTxInput = {
-	address,
-	gasLimit,
-	amount,
-	token,
-	data,
+	// address,
+	// gasLimit,
+	// amount,
+	// token,
+	// data,
 }
 const convertTxInput = {
-	fromToken,
-	gasLimit,
-	amount,
+	// fromToken,
+	// gasLimit,
+	// amount,
 }
 const cancelOrderInput = {
-	signedOrder // TODO
+	// signedOrder // TODO
 }
 const cancelAllOrdersInput = {
 	// empaty object
@@ -34,16 +34,19 @@ export default class txFormatter {
   	this.type=type
   	this.input=inputTx
   	this.raw={}
+  	this.raws=[]
 		this.setToken()
 		this.setGasLimit()
 		this.setGasPrice()
 		this.setTo()
 		this.setValue()
 		this.setData()
+		this.setUI()
+		this.setRaws()
   }
   setToken(){
   	if(this.type === 'convert'){
-  		this.token = utils.getTokenByName('WETH') // token.address , token.name  , token.digits
+  		this.token = utils.getTokenByName('WETH') // token.address , token.name  , token.digits, token.allowance
   	}
   	if(this.input.token){
   		this.token = this.input.token
@@ -61,24 +64,24 @@ export default class txFormatter {
   	const address = this.input.address
 
   	if(this.type === 'approve' || this.type === 'convert' || this.type === 'approveCancel'){
-  		this.raw.to = token.address	 
+  		this.raw.to = token.address	 // contract/token address
   	}
   	if(this.type === 'transfer'){
   		if(token.name ===' ETH'){ 
-  			this.raw.to = address 
+  			this.raw.to = address  // user address
   		}else{
-  			this.raw.to = utils.getContractAddress(token.name) // TODO
+  			this.raw.to = utils.getContractAddress(token.name) // contract/token address
   		}
   	}
-  	if(this.type === ('cancelOrder' || 'cancelAllOrders') ){
+  	if(this.type ==== ('cancelOrder' || 'cancelAllOrders') ){
   		this.raw.to = utils.getContractAddress()
   	}
   }
   setValue(){
-  	if(this.type == ('approve' || 'approveCancel' || 'cancelOrder' || 'cancelAllOrders')){
+  	if(this.type === ('approve' || 'approveCancel' || 'cancelOrder' || 'cancelAllOrders')){
   		this.raw.value = utils.getAmount(0)
   	}
-  	if(this.type == ('transfer' || 'convert')){
+  	if(this.type === ('transfer' || 'convert')){
   		if(token.name==='ETH'){
   			this.raw.value = utils.getAmount(amount)
   		}else{
@@ -90,9 +93,14 @@ export default class txFormatter {
   	const digits = this.token.digits
   	const amount = this.amount && utils.getAmount(this.amount,digits)
 
-  	if(this.type === ('approve' || 'approveCancel')){
+  	if(this.type === 'approve'){
   		const spender = utils.getDelegateAddress()
   		this.raw.data = abis.generateTransferData(spender, amount)
+  		if(token.allowance >0 ){
+  			const cancelRawTx = {...this.raw}
+  			cancelRawTx.data = abis.generateTransferData(spender, '0x0')
+  			this.raws.push(cancelRawTx)
+  		}
   	}
   	if(this.type === 'transfer'){
   		const address = this.address // TO CONFIRM: to or address ?
@@ -118,4 +126,8 @@ export default class txFormatter {
   		this.raw.data = abis.generateCutOffData(timestamp)
   	}
   }
+  setRaws(){
+  	this.raws.push(this.raw)
+  }
+
 }

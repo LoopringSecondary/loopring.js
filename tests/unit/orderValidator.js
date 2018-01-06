@@ -2,16 +2,21 @@
 import utils from './utils'
 
 export default class OrderValidator {
-  constructor(rawOrder) { 
+  constructor(orderType,rawOrder) { 
     this.order = order
-    this.orderType = '' // TODO
+    this.orderType = orderType
     this.tokenToPay = ''
     this.lrcFee = ''
     this.orderTotal = ''
     this.amountToPay = ''
     this.amountToArrove = ''
+    this.setOrderTotal()
+    this.setTokenToPay()
+    this.setAmountAllocated()
+    this.setAmountToPay()
+    this.setAmountToApprove()
   }
-  getOrderTotal(){
+  setOrderTotal(){
     if(this.orderType==='sell'){
       this.orderTotal = this.order.amountB // TODO
     }
@@ -19,7 +24,7 @@ export default class OrderValidator {
       this.orderTotal = this.order.amountS // TODO
     }
   }
-  getTokenToPay(){
+  setTokenToPay(){
     if(this.orderType==='sell'){
       this.tokenToPay = this.order.tokenb // TODO
     }
@@ -27,10 +32,10 @@ export default class OrderValidator {
       this.tokenToPay = this.order.tokens // TODO
     }
   }
-  getAmountAllocated(){
+  setAmountAllocated(){
     // TODO
   }
-  getAmountToPay(){
+  setAmountToPay(){
     const token = this.tokenToPay
     const orderTotal = this.orderTotal
     const lrcFee = this.order.lrcFee
@@ -42,7 +47,7 @@ export default class OrderValidator {
       this.amountToPay = utils.toBigNumber(orderTotal).plus(amountAllocated) 
     }
   }
-  getAmountToApprove(){
+  setAmountToApprove(){
     const allowance = this.tokenToPay.allowance
     const digits = this.tokenToPay.digits
     const amount = this.amountToPay
@@ -68,6 +73,8 @@ export default class OrderValidator {
     
   }
   generaterTxs(){
+    const allowance = this.tokenToPay.allowance
+    const amount = this.amountToApprove
     let  txInput = {
       amount:this.amountToApprove,
       token:this.tokenToPay,

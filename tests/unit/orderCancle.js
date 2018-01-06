@@ -8,6 +8,10 @@ import Loopring from '../../2.0/loopring'
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
+
+
+
+
 function toRawOrder(formInput){
     // TODO formInput unKnown
    const {
@@ -23,8 +27,12 @@ function toRawOrder(formInput){
    }
 }
 
+const cancelOrderInput = {
+  
+}
 
-function rawTxFormatter(rawOrder){
+function rawTxFormatter(formInput){
+  let rawOrder = new orderFormatter(formInput)
   let order = new Order(rawOrder)
   order.sign() // TODO : order must be signed
   const signedOrder = order.order // TODO

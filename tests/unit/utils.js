@@ -51,23 +51,6 @@ export function getTotalAmount(amount,price,digits){
   return '0x' + new BigNumber(new BigNumber(amount).times(price).times(Number('1e' + digits)).toFixed(0)).toString(16);
 }
 
-export function getTTL(){
-  // TODO
-  let ttl = this.appConfig.defaultExpireTime * 24 * 3600;
-  if (this.settingsExpireTimeUnit === "Day") {
-      ttl = this.settingsExpireTime * 24 * 3600;
-  } else if (this.settingsExpireTimeUnit === "Hour") {
-      ttl = this.settingsExpireTime * 3600;
-  } else if (this.settingsExpireTimeUnit === "Minute") {
-      ttl = this.settingsExpireTime * 60;
-  } else if (this.settingsExpireTimeUnit === "Second") {
-      ttl = this.settingsExpireTime;
-  }
-  return ttl
-}
-export function getSalt(){
-  return Math.round(Math.random() * 1e8)
-}
 
 // getter
 

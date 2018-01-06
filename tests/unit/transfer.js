@@ -9,11 +9,8 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 function transferStart(transferTxInput){
-	const txformatter = new txFormatter('transfer',transferTxInput)
-	const txs = new txsFormatter([tx])
-	if(!tx.isBalanceEnough()){
-		// do sth likes trigger a notification
-	}
+	const tx = new txFormatter('transfer',transferTxInput)
+	const txs = new txsFormatter(tx)
 	if(!txs.isEThGasEnough()){
 		// do sth likes trigger a notification
 	}else{

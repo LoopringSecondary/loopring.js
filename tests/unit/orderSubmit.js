@@ -6,127 +6,66 @@ import Loopring from '../../2.0/loopring'
 import orderValidator from './orderValidator'
 import orderFormatter from './orderFormatter'
 import txFormatter from './txFormatter'
+import txsFormatter from './txsFormatter'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
-function submitPrepare(orderInput){
+function trade(orderInput){
   let rawOrder = orderFormatter(orderInput)
-  let validator = new orderValidator(rawOrder)
-  if(!validator.isTokenAllowanceEnough()){
+  let orderValidator = new orderValidator(rawOrder) // TODO orderType
+  let txs = []
+
+  if(!orderValidator.isTokenAllowanceEnough()){ // TODO 
       let  txInput = {
         amount:validator.amountToApprove,
         token:validator.tokenToPay,
       }
-      if(validator.tokenToPay.allowance > 0){
-          txInput.amount = 0
-          const canelRawTx = new txFormatter('approve',txInput)
-      }
-      const approveRawTx = new txFormatter('approve',txInput)
-
+      const wethConvertTx = new txFormatter('convert',txInput)
+      txs.push(wethConvertTx)
   }
-  if(validator.isLrcAllowanceEnough()){
+  if(!orderValidator.isTokenAllowanceEnough()){
+      let  txInput = {
+        amount:validator.amountToApprove,
+        token:validator.tokenToPay,
+      }
+      const tokenApproveTx = new txFormatter('approve',txInput)
+      txs.push(tokenApproveTx)
+  }
+  if(!orderValidator.isLrcAllowanceEnough()){
       const txInput = {
         amount:validator.lrcFee,
         token:utils.getTokenByName('LRC'), //TODO
       }
-      const tx = new txFormatter('approve',txInput)
+      const lrcApproveTx = new txFormatter('approve',txInput)
+      txs.push(lrcApproveTx)
   }
-  if(validator.isEthGasEnough()){
+  const txsFormatter = new txsFormatter(txs)
 
+  if(!txsFormatter.isEthGasEnough()){
+    txsFormatter.sign() // TODO
+    txsFormatter.send() // TODO
   }
-
-}
-
-function submitOrder(rawOrder){
-  let order = new Order(rawOrder)
-  order.sign()
-  return order.submit()
-}
-
-
-
-function toToken(){
-  this.name = ''
-  this.balance = 0
-  this.allowance = 0
-  this.digits = 0
-}
-
-
-function toRawTx(orderInput){
-  const amount = getOrderAmount(orderInput)
-  const token = getOrderToken(orderInput)
-  const lrcFee = getOrderLrcFee(orderInput)
-  cosnt 
-
-  let rawTx = {}
-
-  function setGasLimit(){
-    rawTx.gasLimit = utils.getGasLimit() 
+  if(txsFormatter.isSigned()){
+    order.sign() // TODO
+    order.submit() //TODO
   }
-  function setGasPrice(){
-    rawTx.gasPrice = utils.getGasPrice() 
-  }
-  function setTo(){
-    rawTx.to = token.address
-  }
-  function setValue(){
-    rawTx.value = utils.getAmount(0)
-  }
-  function setData(){
-    if(token.name==='LRC'){
-      const amountToPay = utils.toBigNumber(amount).plus(lrcFee).plus(response.result) // TODO response
-    }else{
-      const amountToPay = utils.toBigNumber(amount).plus(response.result) // TODO response
-    }
-    if (amountToPay.gt(token.allowance) ) {
-        const JAVA_LONG_MAX = '9223372036854775806'
-        let amountToApprove = utils.toBigNumber(JAVA_LONG_MAX,token.digits)
-    }else{
-        let amountToApprove = 0
-    }
-    if(type=='cancel'){
-      amountToApprove = 0
-    }
-    amountToApprove = utils.getAmount(amountToApprove,token.digits)
-    const spender = utils.getDelegateAddress()
-    rawTx.data = abis.generateApproveData(spender,amountToApprove)
-  }
-  setGasLimit()
-  setGasPrice()
-  setTo()
-  setValue()
-  setData()
-  retrun rawTx
-}
-
-function toRawTxs(){
-  let {
-    token,
-    amount,
-  } = formInput
   
-  let rawTxs = []
-  if(token.allowance > 0){
-    const cancelTx = toRawTx(fromInput,'cancel')
-    rawTxs.push(cancelTx)
-  }
-  const approveTx = toRawTx(fromInput)
-  rawTxs.push(approveTx)
-  
-  let isGasEnough = utils.isGasEnough(rawTxs)
-  // TODO
-  return rawTxs
 }
+// function submitOrder(rawOrder){
+//   let order = new Order(rawOrder)
+//   order.sign()
+//   return order.submit()
+// }
+
+// function toToken(){
+//   this.name = ''
+//   this.balance = 0
+//   this.allowance = 0
+//   this.digits = 0
+// }
 
 
-function sell(formInput){
 
-  let rawOrder = toOrder(formInput)
-  let rawTxs = toRawTxs(formInput)
-  let bool = utils.isEthGasEnough(rawTxs)
-  let order = Order(rawOrder)
-}
 
 
