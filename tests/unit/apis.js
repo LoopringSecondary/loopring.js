@@ -9,10 +9,6 @@ import orderFormatter from './orderFormatter'
 import txFormatter from './txFormatter'
 import txsFormatter from './txsFormatter'
 
-new Loopring('https://relay1.loopring.io/rpc')
-console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
-
-
 function transfer(transferTxInput){
   const tx = new txFormatter('transfer',transferTxInput)
   const txs = new txsFormatter(tx)
@@ -37,7 +33,6 @@ function convert(convertTxInput){
     txs.send() // TODO
   }
 }
-
 
 function approve(approveTxInput){
   const tx = new txFormatter('approve',approveTxInput)
@@ -69,7 +64,6 @@ function cancelOrder(cancelOrderInput){
   txs.send() // TODO
 }
 
-
 function cancelAllOrders(){
   const tx = new txFormatter('cancelAllOrders')
   const txs = new txsFormatter([tx]) // TODO
@@ -81,10 +75,10 @@ function trade(orderInput){
   let orderValidator = new orderValidator(rawOrder) // TODO orderType
   let txs = []
 
-  if(!orderValidator.isTokenAllowanceEnough()){ // TODO 
+  if(orderValidator.isWethConvertNeeded()){  
       let  txInput = {
-        amount:validator.amountToApprove,
-        token:validator.tokenToPay,
+        amount:validator.orderTotal-tokenToPay.balance, // TODO
+        token::utils.getTokenByName('WETH'), //TODO
       }
       const wethConvertTx = new txFormatter('convert',txInput)
       txs.push(wethConvertTx)
@@ -117,8 +111,12 @@ function trade(orderInput){
   }
 }
 
-
-
+function sell(orderInput){
+  trade(orderInput)
+}
+function buy(orderInput){
+  trade(orderInput)
+}
 
 
 

@@ -20,7 +20,7 @@ const convertTxInput = {
 	// amount,
 }
 const cancelOrderInput = {
-	// signedOrder // TODO
+	// signedOrder
 }
 const cancelAllOrdersInput = {
 	// empaty object
@@ -62,19 +62,18 @@ export default class txFormatter {
   setTo(){
   	const token = this.token
   	const address = this.input.address
-
   	if(this.type === 'approve' || this.type === 'convert' || this.type === 'approveCancel'){
-  		this.raw.to = token.address	 // contract/token address
+  		this.raw.to = token.address	 // token address
   	}
   	if(this.type === 'transfer'){
   		if(token.name ===' ETH'){ 
   			this.raw.to = address  // user address
   		}else{
-  			this.raw.to = utils.getContractAddress(token.name) // contract/token address
+  			this.raw.to = token.address
   		}
   	}
   	if(this.type ==== ('cancelOrder' || 'cancelAllOrders') ){
-  		this.raw.to = utils.getContractAddress()
+  		this.raw.to = utils.getContractAddress() // TO CONFIRM: loopring contract address 
   	}
   }
   setValue(){
@@ -103,7 +102,7 @@ export default class txFormatter {
   		}
   	}
   	if(this.type === 'transfer'){
-  		const address = this.address // TO CONFIRM: to or address ?
+  		const address = this.address // user address ,not token address
   		if(token.name==='ETH'){
   			this.raw.data = data || '0x'
   		}else{
@@ -131,3 +130,18 @@ export default class txFormatter {
   }
 
 }
+
+// const WETHConfig = this.appConfig.tokenMap['WETH'];
+// convertTx.data = '0xd0e30db0';
+// convertTx.gasPrice = gasPrice;
+// convertTx.gasLimit = gasLimit;
+// convertTx.to = WETHConfig.address;
+// const value = Number(this.buyAmount) * this.buyPrice - this.tokenbBalance ;
+// convertTx.value = '0x' + new BigNumber(Number('1e' + WETHConfig.digits)).times(value.toString(10)).toString(16);
+// const subTitle = 'Convert ETH to  WETH';
+// const description = 'Convert ' + Math.floor((Number(this.buyAmount) * this.buyPrice - this.tokenbBalance) * Number('1e'+this.eth.precision))/ Number('1e'+this.eth.precision) + ' ETH to WETH with gas is ' + Number(convertTx.gasLimit) + ' and gasPrice  is ' + Number(convertTx.gasPrice) / 1e9 + 'Gwei';
+// raws.push({
+//     "raw": JSON.stringify(convertTx),
+//     "subTitle": subTitle,
+//     "description": description
+// });

@@ -114,7 +114,7 @@ export default class orderFormatter {
     }
   }
   setSignature(privateKey){
-    
+    // TODO 
   }
 
 }

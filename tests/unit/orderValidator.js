@@ -59,8 +59,19 @@ export default class OrderValidator {
         this.amountToApprove = 0
     }
   }
-  isWethEnough(){
-    // TODO
+  isWethConvertNeeded(){
+    const token = this.tokenToPay
+    if(token.name === 'WETH'){
+      const wethBalance = token.balance
+      const ethBalance = utils.getBalanceByTokenName('ETH') // TODO
+      if(wethBalance < this.orderTotal < wethBalance + ethBalance){
+        return true
+      }else{
+        return false
+      }
+    }else{
+      return false
+    }
   }
   isTokenAllowanceEnough(){
     return this.amountToPay <= this.tokenToPay.allowance
@@ -68,9 +79,6 @@ export default class OrderValidator {
   isLrcAllowanceEnough(){
     const lrcBalance = utils.getBalanceByTokenName('LRC')
     return this.order.lrcFee <= lrcBalance
-  }
-  isEthGasEnough(){
-    
   }
   generaterTxs(){
     const allowance = this.tokenToPay.allowance
