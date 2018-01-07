@@ -9,22 +9,4 @@ new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
-function approveStart(approveTxInput){
-	const tx = new txFormatter('approve',approveTxInput)
-	const isCancleNeeded = true // TODO
-	if(tx.isCancleNeeded){
-		const cancelTx = new txFormatter('approveCancel',approveTxInput)
-		const txs = new txsFormatter([tx,cancelTx])
-	}else{
-		const txs = new txsFormatter([tx])
-	}
-	if(!txs.isEThGasEnough()){
-		// do sth likes trigger a notification
-	}else{
-		txs.sign() // TODO
-		txs.send() // TODO
-	}
-}
-
-
 

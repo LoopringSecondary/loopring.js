@@ -1,8 +1,15 @@
 
 import utils from './utils'
 
+
+
+const rawOrder = {}
+
+const signedOrder = {}
+
+
 const cancelOrderInput = {
-  // TODO
+  ...signedOrder
 }
 const submitOrderInput = {
   // tokens={},
@@ -12,10 +19,10 @@ const submitOrderInput = {
   // orderType,
 }
 
-const orderInput = cancelOrderInput || submitOrderInput 
+const orderInput = cancelOrderInput || submitOrderInput
 
 export default class orderFormatter {
-  constructor(orderInput) {
+  constructor(orderInput,type) {
     this.type=type
     this.input=orderInput
     this.order={}
@@ -100,12 +107,16 @@ export default class orderFormatter {
     this.order.lrcFee = lrcFee
   }
   setMarginSplitPercentage(){
-    if(Number(order.lrcFee) !==0){
+    if(Number(order.lrcFee) !== 0){
       this.order.marginSplitPercentage =  utils.getConfig('marginSplitPercentage') || 50
     }else{
       this.order.marginSplitPercentage = 100
     }
   }
+  setSignature(privateKey){
+    
+  }
+
 }
 
 

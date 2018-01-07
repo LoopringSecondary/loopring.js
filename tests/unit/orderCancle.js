@@ -4,45 +4,28 @@ import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Order from '../../2.0/order'
 import Loopring from '../../2.0/loopring'
+import orderValidator from './orderValidator'
+import orderFormatter from './orderFormatter'
+import txFormatter from './txFormatter'
+import txsFormatter from './txsFormatter'
 
 new Loopring('https://relay1.loopring.io/rpc')
 console.log('LOOPRING_PROVIDER_HOST',LOOPRING_PROVIDER_HOST)
 
 
+const signedOrder = {}
+const rawOrder = {}
+const cancelOrderInput =  rawOrder || signedOrder // TODO
 
-
-
-function toRawOrder(formInput){
-    // TODO formInput unKnown
-   const {
-    order,
-   } = formInput
-   return {
-     ...order,
-     protocol: utils.getContractAddress(),
-     owner: utils.getWalletAddress(),
-     tokenS: utils.getTokenAddress(tokenS),// TODO
-     tokenB: utils.getTokenAddress(tokenB),// TODO
-     v: Number(values.v),
-   }
+function cancelOrder(cancelOrderInput){
+  const order = new Order(cancelOrderInput)
+  const signedOrder = order.sign()
+  const tx = new txFormatter('cancelOrder',signedOrder)
+  const txs = new txsFormatter([tx]) // TODO
+  txs.send() // TODO
 }
 
-const cancelOrderInput = {
-  
-}
 
-function rawTxFormatter(formInput){
-  let rawOrder = new orderFormatter(formInput)
-  let order = new Order(rawOrder)
-  order.sign() // TODO : order must be signed
-  const signedOrder = order.order // TODO
-  const rawTx = t
-}
 
-async function cancelOrder(rawTx,privateKey){
-  const tx = Transaction(rawTx)
-  // tx.setData(dataParams) // TODO
-  await tx.setNonce()
-  tx.sign()
-  await tx.send()
-}
+
+

@@ -12,6 +12,10 @@ export default class Order {
     // TODO validator.validate({value:order,type:'ORDER'})
     this.order = order
   }
+  cancelSign(){
+   // const amount = target.buyNoMoreThanAmountB ? target.amountB : target.amountS;
+   // const cancelData = order.cancel(amount, this.wallet.privateKey); 
+  }
   sign(privateKey){
       validator.validate({value:privateKey,type:'PRIVATE_KEY'})
       const orderTypes = [
