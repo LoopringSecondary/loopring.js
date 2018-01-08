@@ -1,6 +1,7 @@
 import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
+import Account from '../../2.0/account'
 import utils from './utils'
 
 const approveTxInput = {
@@ -47,6 +48,7 @@ export default class txFormatter {
     this.setValue()
     this.setChainId()
 		this.setData()
+
   }
   setToken(){
   	if(this.type === 'convert'){
@@ -57,7 +59,7 @@ export default class txFormatter {
   	}
   }
   setGasLimit(){
-  	const gasLimit = this.input.gasLimit || 8400  // TO CONFIRM
+  	const gasLimit = this.input.gasLimit
   	this.raw.gasLimit = utils.getGasLimit(gasLimit)  
   }
   setGasPrice(){
@@ -91,9 +93,6 @@ export default class txFormatter {
   			this.raw.value = utils.getAmount(0)
   		}
   	}
-  }
-  setChainId(){
-    this.raw.chainId = this.input.chainId || 1
   }
   setData(){
   	const digits = this.token.digits
@@ -133,20 +132,27 @@ export default class txFormatter {
   		this.raw.data = abis.generateCutOffData(timestamp)
   	}
   }
+  setChainId(){
+    this.raw.chainId = this.input.chainId || 1
+  }
   async setNonce(address,tag){
-    // run befor tx.sign
-    if(!this.input.nonce){
-      this.raw.nonce = await apis.getTransactionCount(address,tag)
-    }
+    const tag = tag ? tag || 'latest'
+    const nonce = await apis.getTransactionCount(address,tag)
+    this.raw.nonce = utils.toHex(nonce+1)
+    return this
   }
-  async sign(privateKey){
-    const ethTx = new Transaction(this.raw)
-    const signed = ethTx.sign(privateKey)
-    this.ethTx = ethTx
-    this.signed = signed
+  sign(privateKey){
+    const account = new Account(privateKey)
+    const address = account.address
+    const _this = this
+    return _this.setNonce(address).then(tx=>{
+        _this.ethTx = new Transaction(tx.raw)
+        return _this.ethTx.sign(privateKey)
+    })
   }
-  async send(){
-    return .ethTx.send(this.signed)
+  send(){
+    return this.ethTx.send(signed)
   }
 }
+
 

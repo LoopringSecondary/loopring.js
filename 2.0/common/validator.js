@@ -96,6 +96,11 @@ let isString = (object)=>{
     return typeof object === 'string' || (object && object.constructor && object.constructor.name === 'String')
 }
 
+let isValidETHAddress = (address)=>{
+  // TODO
+  return true
+}
+
 
 
 

@@ -12,36 +12,25 @@ import txValidator from './txValidator'
 function transfer(transferTxInput){
   const tx = new txFormatter('transfer',transferTxInput)
   const validator = new txValidator([tx])
-  if(!validator.isEThGasEnough()){
-    // do sth likes trigger a notification
-  }
-  
-  else{
-    txs.sign() // TODO
-    txs.send() // TODO
+  if(validator.isEThGasEnough()){
+    validator.sign().then(res=>{
+      return validator.send() // TODO ？？？
+    }).then(res=>{
+      // TODO
+    })
+  }else{
+    // do something like notification
   }
 }
 
 function convert(convertTxInput){
   const tx = new txFormatter('convert',convertTxInput)
   const validator = new txValidator([tx])
-  if(!validator.isEThGasEnough()){
-    // do sth likes trigger a notification
-  }else{
-    txs.sign() // TODO
-    txs.send() // TODO
-  }
 }
 
 function approve(approveTxInput){
   const tx = new txFormatter('approve',approveTxInput)
   const validator = new txValidator([tx])
-  if(!validator.isEThGasEnough()){
-    // do sth likes trigger a notification
-  }else{
-    txs.sign() // TODO
-    txs.send() // TODO
-  }
 }
 
 const signedOrder = {}
@@ -53,24 +42,11 @@ function cancelOrder(cancelOrderInput){
   const signedOrder = order.sign()
   const tx = new txFormatter('cancelOrder',signedOrder)
   const validator = new txValidator([tx]) // TODO
-  if(!validator.isEThGasEnough()){
-    // do sth likes trigger a notification
-  }else{
-    txs.sign() // TODO
-    txs.send() // TODO
-  }
-  
 }
 
 function cancelAllOrders(){
   const tx = new txFormatter('cancelAllOrders')
   const validator = new txValidator([tx])
-  if(!validator.isEThGasEnough()){
-    // do sth likes trigger a notification
-  }else{
-    txs.sign() // TODO
-    txs.send() // TODO
-  }
 }
 
 function trade(orderInput){
@@ -102,12 +78,9 @@ function trade(orderInput){
       txs.push(lrcApproveTx)
   }
   const txValidator = new txValidator(txs)
-
   if(!txValidator.isEthGasEnough()){
     txValidator.sign() // TODO
     txValidator.send() // TODO
-  }
-  if(txValidator.isSigned()){
     order.sign() // TODO
     order.submit() //TODO
   }

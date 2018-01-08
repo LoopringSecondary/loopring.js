@@ -71,6 +71,22 @@ export async function getOrders(filter){
 
 
 
+// ==================
+// Account
+// ==================
+
+export async function getEthBalance(address,tag){
+    // validator.validate({value:address,type:'ADDRESS'})
+    // validator.validate({value:tag,type:'RPC_TAG'})
+    let body = {}
+    body.method = 'eth_getBalance'
+    body.params = [address,tag]
+    return request({
+      method:'post',
+      headers,
+      body,
+    })
+}
 
 
 
