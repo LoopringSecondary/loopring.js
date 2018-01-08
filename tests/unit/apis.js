@@ -7,26 +7,25 @@ import Loopring from '../../2.0/loopring'
 import orderValidator from './orderValidator'
 import orderFormatter from './orderFormatter'
 import txFormatter from './txFormatter'
-import txsFormatter from './txsFormatter'
+import txValidator from './txValidator'
 
 function transfer(transferTxInput){
   const tx = new txFormatter('transfer',transferTxInput)
-  const txs = new txsFormatter(tx)
-  if(!txs.isEThGasEnough()){
+  const validator = new txValidator([tx])
+  if(!validator.isEThGasEnough()){
     // do sth likes trigger a notification
-  }else{
+  }
+  
+  else{
     txs.sign() // TODO
     txs.send() // TODO
   }
 }
 
 function convert(convertTxInput){
-  const txformatter = new txFormatter('convert',convertTxInput)
-  const txs = new txsFormatter([tx])
-  if(!tx.isBalanceEnough()){
-    // do sth likes trigger a notification
-  }
-  if(!txs.isEThGasEnough()){
+  const tx = new txFormatter('convert',convertTxInput)
+  const validator = new txValidator([tx])
+  if(!validator.isEThGasEnough()){
     // do sth likes trigger a notification
   }else{
     txs.sign() // TODO
@@ -36,15 +35,8 @@ function convert(convertTxInput){
 
 function approve(approveTxInput){
   const tx = new txFormatter('approve',approveTxInput)
-  
-  const isCancleNeeded = true // TODO
-  if(tx.isCancleNeeded){
-    const cancelTx = new txFormatter('approveCancel',approveTxInput)
-    const txs = new txsFormatter([tx,cancelTx])
-  }else{
-    const txs = new txsFormatter([tx])
-  }
-  if(!txs.isEThGasEnough()){
+  const validator = new txValidator([tx])
+  if(!validator.isEThGasEnough()){
     // do sth likes trigger a notification
   }else{
     txs.sign() // TODO
@@ -60,30 +52,40 @@ function cancelOrder(cancelOrderInput){
   const order = new Order(cancelOrderInput)
   const signedOrder = order.sign()
   const tx = new txFormatter('cancelOrder',signedOrder)
-  const txs = new txsFormatter([tx]) // TODO
-  txs.send() // TODO
+  const validator = new txValidator([tx]) // TODO
+  if(!validator.isEThGasEnough()){
+    // do sth likes trigger a notification
+  }else{
+    txs.sign() // TODO
+    txs.send() // TODO
+  }
+  
 }
 
 function cancelAllOrders(){
   const tx = new txFormatter('cancelAllOrders')
-  const txs = new txsFormatter([tx]) // TODO
-  txs.send() // TODO
+  const validator = new txValidator([tx])
+  if(!validator.isEThGasEnough()){
+    // do sth likes trigger a notification
+  }else{
+    txs.sign() // TODO
+    txs.send() // TODO
+  }
 }
 
 function trade(orderInput){
   let rawOrder = orderFormatter(orderInput)
-  let orderValidator = new orderValidator(rawOrder) // TODO orderType
+  let validator = new orderValidator(rawOrder) // TODO orderType
   let txs = []
-
-  if(orderValidator.isWethConvertNeeded()){  
+  if(validator.isWethConvertNeeded()){  
       let  txInput = {
-        amount:validator.orderTotal-tokenToPay.balance, // TODO
+        amount:validator.orderTotal-validator.tokenToPay.balance, // TODO
         token::utils.getTokenByName('WETH'), //TODO
       }
       const wethConvertTx = new txFormatter('convert',txInput)
       txs.push(wethConvertTx)
   }
-  if(!orderValidator.isTokenAllowanceEnough()){
+  if(!validator.isTokenAllowanceEnough()){
       let  txInput = {
         amount:validator.amountToApprove,
         token:validator.tokenToPay,
@@ -91,7 +93,7 @@ function trade(orderInput){
       const tokenApproveTx = new txFormatter('approve',txInput)
       txs.push(tokenApproveTx)
   }
-  if(!orderValidator.isLrcAllowanceEnough()){
+  if(!validator.isLrcAllowanceEnough()){
       const txInput = {
         amount:validator.lrcFee,
         token:utils.getTokenByName('LRC'), //TODO
@@ -99,13 +101,13 @@ function trade(orderInput){
       const lrcApproveTx = new txFormatter('approve',txInput)
       txs.push(lrcApproveTx)
   }
-  const txsFormatter = new txsFormatter(txs)
+  const txValidator = new txValidator(txs)
 
-  if(!txsFormatter.isEthGasEnough()){
-    txsFormatter.sign() // TODO
-    txsFormatter.send() // TODO
+  if(!txValidator.isEthGasEnough()){
+    txValidator.sign() // TODO
+    txValidator.send() // TODO
   }
-  if(txsFormatter.isSigned()){
+  if(txValidator.isSigned()){
     order.sign() // TODO
     order.submit() //TODO
   }

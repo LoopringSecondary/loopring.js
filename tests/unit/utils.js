@@ -1,6 +1,5 @@
 
 
-// formatter
 export function toHex(obj){
   // obj = number / ??
   // cutoffTimeStamp = '0x' + (Number(cutoffNode.value) / 1000)toHex
@@ -9,10 +8,7 @@ export function toHex(obj){
 
 export function toQuantity(){
   // const gasPrice = '0x' + (Number(this.settingsGasPrice) * 1e9).toString(16)
-  
 }
-
-
 export function toBigNumber(amount,digits){
   if(digits){
     return new BigNumber(amount).times(Number('1e'+ token.digits))
@@ -46,13 +42,9 @@ export function getAmount(amount,digits){
   }
   
 }
-
 export function getTotalAmount(amount,price,digits){
   return '0x' + new BigNumber(new BigNumber(amount).times(price).times(Number('1e' + digits)).toFixed(0)).toString(16);
 }
-
-
-// getter
 
 export function getContractAddress(){
   // const spender = this.appConfig.delegateAddress;
@@ -62,11 +54,13 @@ export function getContractAddress(){
 export function getDelegateAddress(){
   // const spender = this.appConfig.delegateAddress;
   // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return 'xxx';
+  // TODO
+  return {} 
 }
 
 export function getWalletAddress(){
-  return 'xxx' 
+  // TODO
+  return {} 
 }
 export function getTokenByName(name){
   // TODO
@@ -86,54 +80,20 @@ export getBalanceOfToken(token){
   // const balance = balances[this.tokenb.token.toUpperCase()] ? Number(balances[this.tokenb.token.toUpperCase()].balance) : 0;
   const balances = {} //TODO
   return this.balances[token] ? this.balances[token].balance : 0;
-  // TODO 
-    // 本地存储了所有token的余额吗？
-    // 需不需要异步查询一下余额呢？
+  // TODO: get from local or server 
 }
-
-export function isGasEnough(rawTxs){
-  // TODO 
-  // 判断 rawTx 是数组还是对象
+export function isGasEnough(rawTx){
   const balance = getBalanceOfToken('ETH')
-  const need = Number(rawTx.gasLimit) * Number(rawTx.gasPrice)
-  if(need>balance){
-    let tip ='You has insufficient ETH balance for gasLimit * gasPrice'
-    return false
-  }else{
-    return true
-  }
-  // if (new BigNumber(this.fromTokenBalance.balance).lt(new BigNumber(tx.value).plus(new BigNumber(tx.gasLimit).times(Number(tx.gasPrice))))) {
-
-  // }
-
-  // const ETHBalance = this.balances['ETH'] ? this.balances['ETH'].balance : 0;
-  // if (ETHBalance < detail.raws.length *(Number(tx.gasLimit) * Number(tx.gasPrice))) {
-  //     const detail = {
-  //         text: 'You has insufficient ETH balance for gasLimit * gasPrice',
-  //         category: "warning",
-  //         duration: 8000
-  //     };
-  //     this.dispatchEvent(new CustomEvent('notification', {
-  //         bubbles: true,
-  //         composed: true,
-  //         detail: detail
-  //     }));
-  //     return;
-  // }
+  const required = Number(rawTx.gasLimit) * Number(rawTx.gasPrice)
+  return required <= balance
 }
-
-
 export function isBalanceEnough(rawTx,token){
   const balance = getBalanceOfToken(token)
   if(token==='ETH'){
-    const need = Number(tx.value) + Number(tx.gasLimit) * Number(tx.gasPrice);
+    const required = Number(tx.value) + Number(tx.gasLimit) * Number(tx.gasPrice);
   }else{
-    const need = Number(tx.gasLimit) * Number(tx.gasPrice);
+    const required = Number(tx.gasLimit) * Number(tx.gasPrice);
   }
-  if(need>balance){
-    // TODO
-  }else{
-    // TODO
-  }
+  return required <= balance
 }
 

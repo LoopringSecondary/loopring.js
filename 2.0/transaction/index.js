@@ -6,36 +6,19 @@ import * as apis from '../common/apis'
 // import {BaseTx,RawTx,SignedTx,RPC_TAG,ADDRESS} from '../common/types'
 
 export default class Transaction {
-  constructor(baseTx) { 
+  constructor(rawTx) { 
     // TODO validator.validate({value:tx,type:'TX'})
-    this.rawTx = baseTx
-    this.rawTx.chainId = this.rawTx.chainId || 1
-    this.signedTx = null
-  }
-  setData(payload){
-    this.rawTx.data = abis.getAbiData(payload)
-  }
-  async setNonce(add,tag){
-    if(!this.rawTx.nonce){
-    	this.rawTx.nonce = await apis.getTransactionCount(add,tag)
-    }
+    this.raw = rawTx
   }
   sign(privateKey){
     validator.validate({value:privateKey,type:'PRIVATE_KEY'})
     privateKey = formatter.toBuffer(privateKey)
-
-    const ethTx = new EthTransaction(this.rawTx)
+    const ethTx = new EthTransaction(this.raw)
     const signed = ethTx.sign(privateKey).serialize()
-    this.signedTx = formatter.toHex(signed)
+    return formatter.toHex(signed)
   }
   async send(){
-    return apis.sendRawTransaction(this.signedTx)
-  }
-  static async batchSend(){
-    // TODO
-  }
-  static async batchSign(){
-    // TODO
+    return apis.sendRawTransaction(this.signed)
   }
 }
 

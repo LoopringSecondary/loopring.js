@@ -4,9 +4,14 @@ import Transaction from '../../2.0/transaction'
 import utils from './utils'
 
 const approveTxInput = {
+  // token,
+  // amount,
+}
+const approveCancelTxInput = {
 	// token,
 	// amount,
 }
+
 const transferTxInput = {
 	// address,
 	// gasLimit,
@@ -26,23 +31,22 @@ const cancelAllOrdersInput = {
 	// empaty object
 }
 
-const inputTx = approveTxInput || transferTxInput || convertTxInput || cancelOrderInput || cancelAllOrdersInput
+const inputTx = approveTxInput || approveCancelTxInput || transferTxInput || convertTxInput || cancelOrderInput || cancelAllOrdersInput
 const type = 'approve' || 'approveCancel' || 'transfer' || 'convert' || 'cancelOrder' || 'cancelAllOrders'
 
 export default class txFormatter {
   constructor(type,inputTx) {
-  	this.type=type
-  	this.input=inputTx
-  	this.raw={}
-  	this.raws=[]
+  	this.type = type
+  	this.input = inputTx
+  	this.raw = {}
+    this.signed = ''
 		this.setToken()
 		this.setGasLimit()
 		this.setGasPrice()
 		this.setTo()
-		this.setValue()
+    this.setValue()
+    this.setChainId()
 		this.setData()
-		this.setUI()
-		this.setRaws()
   }
   setToken(){
   	if(this.type === 'convert'){
@@ -54,7 +58,7 @@ export default class txFormatter {
   }
   setGasLimit(){
   	const gasLimit = this.input.gasLimit || 8400  // TO CONFIRM
-  	this.raw.gasLimit = utils.getGasLimit()  
+  	this.raw.gasLimit = utils.getGasLimit(gasLimit)  
   }
   setGasPrice(){
   	this.raw.gasPrice = utils.getGasPrice() 
@@ -62,7 +66,7 @@ export default class txFormatter {
   setTo(){
   	const token = this.token
   	const address = this.input.address
-  	if(this.type === 'approve' || this.type === 'convert' || this.type === 'approveCancel'){
+  	if(this.type === ('approve' || 'convert' || 'approveCancel')){
   		this.raw.to = token.address	 // token address
   	}
   	if(this.type === 'transfer'){
@@ -88,21 +92,23 @@ export default class txFormatter {
   		}
   	}
   }
+  setChainId(){
+    this.raw.chainId = this.input.chainId || 1
+  }
   setData(){
   	const digits = this.token.digits
   	const amount = this.amount && utils.getAmount(this.amount,digits)
-
   	if(this.type === 'approve'){
-  		const spender = utils.getDelegateAddress()
-  		this.raw.data = abis.generateTransferData(spender, amount)
-  		if(token.allowance >0 ){
-  			const cancelRawTx = {...this.raw}
-  			cancelRawTx.data = abis.generateTransferData(spender, '0x0')
-  			this.raws.push(cancelRawTx)
-  		}
-  	}
+      const spender = utils.getDelegateAddress()
+      this.raw.data = abis.generateTransferData(spender, amount)
+      if(token.allowance > 0){
+        this.cancelTx = {...this.raw}
+        this.cancelTx.data = abis.generateTransferData(spender, '0x0')
+      }
+    }
   	if(this.type === 'transfer'){
-  		const address = this.address // user address ,not token address
+      const address = this.address // user address ,not token address
+  		const token = this.token // TODO
   		if(token.name==='ETH'){
   			this.raw.data = data || '0x'
   		}else{
@@ -110,6 +116,8 @@ export default class txFormatter {
   		}
   	}
   	if(this.type === 'convert'){
+      const fromToken = this.input.fromToken // TODO
+      const token = this.token // TODO
   		if(fromToken === 'ETH'){
   			this.raw.data = '0xd0e30db0' 
   		}else{
@@ -125,23 +133,20 @@ export default class txFormatter {
   		this.raw.data = abis.generateCutOffData(timestamp)
   	}
   }
-  setRaws(){
-  	this.raws.push(this.raw)
+  async setNonce(address,tag){
+    // run befor tx.sign
+    if(!this.input.nonce){
+      this.raw.nonce = await apis.getTransactionCount(address,tag)
+    }
   }
-
+  async sign(privateKey){
+    const ethTx = new Transaction(this.raw)
+    const signed = ethTx.sign(privateKey)
+    this.ethTx = ethTx
+    this.signed = signed
+  }
+  async send(){
+    return .ethTx.send(this.signed)
+  }
 }
 
-// const WETHConfig = this.appConfig.tokenMap['WETH'];
-// convertTx.data = '0xd0e30db0';
-// convertTx.gasPrice = gasPrice;
-// convertTx.gasLimit = gasLimit;
-// convertTx.to = WETHConfig.address;
-// const value = Number(this.buyAmount) * this.buyPrice - this.tokenbBalance ;
-// convertTx.value = '0x' + new BigNumber(Number('1e' + WETHConfig.digits)).times(value.toString(10)).toString(16);
-// const subTitle = 'Convert ETH to  WETH';
-// const description = 'Convert ' + Math.floor((Number(this.buyAmount) * this.buyPrice - this.tokenbBalance) * Number('1e'+this.eth.precision))/ Number('1e'+this.eth.precision) + ' ETH to WETH with gas is ' + Number(convertTx.gasLimit) + ' and gasPrice  is ' + Number(convertTx.gasPrice) / 1e9 + 'Gwei';
-// raws.push({
-//     "raw": JSON.stringify(convertTx),
-//     "subTitle": subTitle,
-//     "description": description
-// });
