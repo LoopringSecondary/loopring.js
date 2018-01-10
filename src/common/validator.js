@@ -96,13 +96,27 @@ let isString = (object)=>{
     return typeof object === 'string' || (object && object.constructor && object.constructor.name === 'String')
 }
 
-let isValidETHAddress = (address)=>{
+let isETHAddress = (address)=>{
+  // TODO
+  return true
+}
+let isETHTag = (address)=>{
   // TODO
   return true
 }
 
+// isValidETHAddress(token)
+// isValidETHAddress(add)
+// isValidEthTag(add)
+// if (!tag)
+// {
+//     tag = 'latest';
+// }
 
-
+// if (tag !== 'latest' && tag !== 'earliest' && tag !== 'pending')
+// {
+//     throw new Error('invalid  tag:' + tag);
+// }
 
 export default {
   validate,

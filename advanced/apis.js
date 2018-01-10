@@ -13,11 +13,8 @@ function transfer(transferTxInput){
   const tx = new txFormatter('transfer',transferTxInput)
   const validator = new txValidator([tx])
   if(validator.isEThGasEnough()){
-    validator.sign().then(res=>{
-      return validator.send() // TODO ？？？
-    }).then(res=>{
-      // TODO
-    })
+    validator.sign()
+    validaor.send()
   }else{
     // do something like notification
   }
@@ -51,17 +48,17 @@ function cancelAllOrders(){
 
 function trade(orderInput){
   let rawOrder = orderFormatter(orderInput)
-  let validator = new orderValidator(rawOrder) // TODO orderType
+  let validator = new orderValidator(rawOrder)
   let txs = []
-  if(validator.isWethConvertNeeded()){  
+  if(validator.isTokenSBalanceEnough()){  
       let  txInput = {
-        amount:validator.orderTotal-validator.tokenToPay.balance, // TODO
+        amount:validator.amountToConvert, 
         token::utils.getTokenByName('WETH'), //TODO
       }
       const wethConvertTx = new txFormatter('convert',txInput)
       txs.push(wethConvertTx)
   }
-  if(!validator.isTokenAllowanceEnough()){
+  if(!validator.isTokenSAllowanceEnough()){
       let  txInput = {
         amount:validator.amountToApprove,
         token:validator.tokenToPay,
@@ -81,6 +78,7 @@ function trade(orderInput){
   if(!txValidator.isEthGasEnough()){
     txValidator.sign() // TODO
     txValidator.send() // TODO
+    let order = new Order(rawOrder)
     order.sign() // TODO
     order.submit() //TODO
   }

@@ -1,29 +1,19 @@
-/*
+import Transaction from './transaction';
+import HttpProvider from './common/httpprovider';
+import validator from './common/validator';
 
-  Copyright 2017 Loopring Project Ltd (Loopring Foundation).
+export default class Loopring {
 
-  Licensed under the Apache License, Version 2.0 (the 'License');
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+  constructor(host) {
+  	validator.validate({type:'URL',value:host})
+  	// browser env
+    if(typeof window !== 'undefined'){
+    	window.LOOPRING_PROVIDER_HOST = host // used by apis.js
+    }
+    // node env
+    if(typeof global !== 'undefined'){
+    	global.LOOPRING_PROVIDER_HOST = host // used by apis.js
+    }
+  }
+}
 
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an 'AS IS' BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-
-*/
-
-module.exports = {
-    decrypt: require('./decrypt'),
-    ens: require('./ens'),
-    hexUtils: require('./hex-utils'),
-    keystore: require('./keystore'),
-    order: require('./order'),
-    relay: require('./relay'),
-    signer: require('./signer'),
-    validator: require('./validator'),
-    wallet: require('./wallet')
-};

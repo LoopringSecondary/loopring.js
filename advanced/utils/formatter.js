@@ -1,15 +1,14 @@
 import BigNumber from 'bignumber.js'
-
-export function toHex(obj){
-  // TODO obj type validator
-  return  '0x' + obj.toString(16)
-}
 export function toBigNumber(amount,digits){
   if(digits){
     return new BigNumber(amount).times(Number('1e'+ token.digits))
   }else{
     return new BigNumber(amount)
   }
+}
+export function toHex(obj){
+  // TODO obj type validator
+  return  '0x' + obj.toString(16)
 }
 export function getGasPrice(amount){
   if(!amount){

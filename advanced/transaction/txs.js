@@ -1,9 +1,8 @@
 import * as apis from '../../2.0/common/apis'
 import * as abis from '../../2.0/common/abis'
-import Transaction from '../../2.0/transactioni'
-import utils from './utils'
+import Transaction from '../..//transactioni'
 
-export default class txValidator {
+export default class Txs {
   constructor(txs) {
     this.txs=txs
     this.uiTxs=[]
@@ -49,22 +48,16 @@ export default class txValidator {
     return gasTotal <= EthBalance
   }
   async sign(){
-    this.txs = this.txs.map(tx=>{
-      const result = await tx.sign()
-      tx.signed = result // TODO
-      return tx
-    })
+    for(tx of this.txs){
+      await tx.sign()
+    }
+    this.txs.map(tx=>tx.sign())
   }
   async sign2(){
-    const promises = this.txs.map(tx=>{
-      return tx.sign()
-    })
-    return Promise.all(promises).then(results=>{
-      // TODO
-    }).catch(error=>{
-      // TODO
-    })
+    const promises = this.txs.map(tx=>tx.sign())
+    const results = await Promise.all(promises)
   }
+
   async send(){
     this.txs.map(tx=>{
       const result = await tx.send()

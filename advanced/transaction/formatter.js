@@ -3,42 +3,14 @@ import * as abis from '../../2.0/common/abis'
 import Transaction from '../../2.0/transaction'
 import Account from '../../2.0/account'
 import utils from './utils'
-
-const approveTxInput = {
-  // token,
-  // amount,
-}
-const approveCancelTxInput = {
-	// token,
-	// amount,
-}
-
-const transferTxInput = {
-	// address,
-	// gasLimit,
-	// amount,
-	// token,
-	// data,
-}
-const convertTxInput = {
-	// fromToken,
-	// gasLimit,
-	// amount,
-}
-const cancelOrderInput = {
-	// signedOrder
-}
-const cancelAllOrdersInput = {
-	// empaty object
-}
-
-const inputTx = approveTxInput || approveCancelTxInput || transferTxInput || convertTxInput || cancelOrderInput || cancelAllOrdersInput
-const type = 'approve' || 'approveCancel' || 'transfer' || 'convert' || 'cancelOrder' || 'cancelAllOrders'
+import {txType,txInput,rawTx} from './types'
 
 export default class txFormatter {
-  constructor(type,inputTx) {
-  	this.type = type
-  	this.input = inputTx
+
+  constructor(txType,txInput) {
+    
+  	this.type = txType
+  	this.input = txInput
   	this.raw = {}
     this.signed = ''
 		this.setToken()
@@ -139,16 +111,13 @@ export default class txFormatter {
     const tag = tag ? tag || 'latest'
     const nonce = await apis.getTransactionCount(address,tag)
     this.raw.nonce = utils.toHex(nonce+1)
-    return this
   }
   sign(privateKey){
     const account = new Account(privateKey)
     const address = account.address
-    const _this = this
-    return _this.setNonce(address).then(tx=>{
-        _this.ethTx = new Transaction(tx.raw)
-        return _this.ethTx.sign(privateKey)
-    })
+    this.setNonce(address)
+    this.ethTx = new Transaction(tx.raw)
+    this.ethTx.sign(privateKey)
   }
   send(){
     return this.ethTx.send(signed)
