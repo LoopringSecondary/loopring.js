@@ -25,8 +25,8 @@ export const cancelOrderInput = {
 }
 
 export const submitOrderInput = {
-  tokenS:{},
-  tokenB:{},
+  tokensName:{},
+  tokenbName:{},
   quantity:'',
   price:'',
 }

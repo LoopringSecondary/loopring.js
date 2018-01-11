@@ -13,12 +13,7 @@ export default class OrderValidator {
     this.setAmountToApprove()
   }
   setTokenToSell(){
-    this.tokenS = utils.getTokenByAddress(this.order.tokenS)
-    // TODO
-    // tokenS.alloawance
-    // tokenS.blalance
-    // tokenS.digits
-    // tokenS.address
+    this.tokenS = utils.getTokenByAddress(this.order.tokenS) // TODO token module
   }
   setAmountToPay(){
     const tokenS = this.tokenS
@@ -32,11 +27,11 @@ export default class OrderValidator {
     }
   }
   setAmountToApprove(){
-    const allowance = this.tokenS.allowance // TODO
-    const digits = this.tokenS.digits
+    const allowance = this.tokenS.allowance // TODO token module
+    const digits = this.tokenS.digits 
     const amountToPay = this.amountToPay
 
-    if (amountToPay.gt(allowance)){ // TODO
+    if (amountToPay.gt(allowance)){ 
         const JAVA_LONG_MAX = '9223372036854775806'
         this.amountToApprove = utils.toBigNumber(JAVA_LONG_MAX,digits)
     }else{

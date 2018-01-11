@@ -9,6 +9,9 @@ export default class Auth {
     }
     return account
   }
+  getWalletAddress(){
+    // TODO
+  }
   isUnlocked(){
     const wallet = {} // TODO
     return !!wallet

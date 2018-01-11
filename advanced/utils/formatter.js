@@ -1,92 +1,63 @@
 import BigNumber from 'bignumber.js'
+
+/*
+  txFormatter：setTimestamp,setNonce
+*/
+export function toHex(obj){
+  return  '0x' + obj.toString(16)
+}
+
+/*
+  orderValidator: setAmountToPay,setAmountToApprove
+*/
 export function toBigNumber(amount,digits){
   if(digits){
-    return new BigNumber(amount).times(Number('1e'+ token.digits))
+    const digits = Number('1e'+ digits)
+    return new BigNumber(amount).times(digits)
   }else{
     return new BigNumber(amount)
   }
 }
-export function toHex(obj){
-  // TODO obj type validator
-  return  '0x' + obj.toString(16)
-}
-export function getGasPrice(amount){
-  if(!amount){
-    const defaultGasPrice  = '' // TODO 
-    amount = defaultGasPrice
-  }
-  return '0x' + (Number(amount) * 1e9).toString(16)
-}
-export function getGasLimit(amount){
-  if(!amount){
-    const defaultGasLimit  = '' // TODO 
-    amount = defaultGasLimit 
-  }
-  return '0x' + Number(amount).toString(16) || '0x14820'; // TODO
-}
 
+/*
+  txFormatter: setValue,setData
+  orderFormatter: setAmountS, setAmountB
+*/
 export function getAmount(amount,digits){
-  if(!digits){
-    digits = 18
-  }
-  if(amount){
-   return '0x' + (new BigNumber(amount).times('1e' + digits)).toString(16)
-  }else{
-    return '0x0'
-  }
-}
-export function getTotalAmount(amount,price,digits){
-  return '0x' + new BigNumber(new BigNumber(amount).times(price).times(Number('1e' + digits)).toFixed(0)).toString(16);
+  digits = digits ? digits : 18
+  digits = Number('1e' + digits)
+  amount = amount ? amount : 0
+  const bn = new BigNumber(amount).times(digits)
+  return toHex(bg)
 }
 
-export function getContractAddress(){
-  // const spender = this.appConfig.delegateAddress;
-  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return 'xxx';
-}
-export function getDelegateAddress(){
-  // const spender = this.appConfig.delegateAddress;
-  // raw.protocol = this.appConfig.contractVersionMap[currentVersion].address;
-  return ''
+export function getGasPrice(amount){
+  // amount : user input , number or string
+  const defaultGasPrice  = '' // TODO
+  amount = amount ? amount : defaultGasPrice
+  amount = Number(amount) * 1e9
+  return toHex(amount)
 }
 
-export function getWalletAddress(){
-  // TODO
-  return ''
-}
-export function getTokenByName(name){
-  // TODO
-  return {} 
-}
-export function getTokenByAddress(address){
-  // TODO
-  return {} 
-}
-export function getTokenAddress(tokenName){
-  // TODO
-  return 'xxx'
+export function getGasLimit(amount){
+  // amount : user input , number or string
+  const defaultGasLimit  = 84000 
+  amount = amount ? amount : defaultGasLimit
+  amount = Number(amount)
+  return toHex(amount)
 }
 
-expor function getConfig(){
-  // TODO
-  return {}
+export function getTotalAmount(quantity,price,digits){
+  digits = digits ? digits : 18
+  digits = Number('1e' + digits)
+  quantity = quantity ? quantity : 0
+  const total = new BigNumber(new BigNumber(quantity).times(price).times(digits)).toFixed(0)
+  return toHex(total)
 }
-export getBalanceOfToken(token){
-  // const balances = _.keyBy(this.balancesRaw.result.tokens, 'token');
-  // const balance = balances[this.tokenb.token.toUpperCase()] ? Number(balances[this.tokenb.token.toUpperCase()].balance) : 0;
-  const balances = {} //TODO
-  return this.balances[token] ? this.balances[token].balance : 0;
-  // TODO: get from local or server 
-}
-export function isBalanceEnough(rawTx,token){
-  const balance = getBalanceOfToken(token)
-  if(token==='ETH'){
-    const required = Number(tx.value) + Number(tx.gasLimit) * Number(tx.gasPrice);
-  }else{
-    const required = Number(tx.gasLimit) * Number(tx.gasPrice);
-  }
-  return required <= balance
-}
+
+
+
+
 
 
 

@@ -1,4 +1,10 @@
-import utils from '../utils'
+
+/*
+  - orderFormatter token.balance
+  - orderValidator token.balance ,token.allowance
+  - txFormatter token.balance ,token.allowance 
+  - txsFormatter eth.balance
+*/
 
 const rawToken = {
   name:'',
@@ -8,24 +14,22 @@ const rawToken = {
   balance:'',
   allocated:'',
 }
-
 export default class token {
   constructor(tokenInput) {
     
   }
   getAddress(){
-
+    // TODO
   }
   getBalance(){
-
+    // TODO
   }
   getAllowance(){
-
+    // TODO
   }
   getAllocated(){
 
   }
-
 }
 
 // getToken

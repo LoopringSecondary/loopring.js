@@ -1,9 +1,6 @@
 // require('babel-polyfill')
-import * as apis from '../src/common/apis'
-import * as abis from '../src/common/abis'
 import Transaction from '../src/transaction'
 import Order from '../src/order'
-import Loopring from '../src/loopring'
 import orderValidator from './order/validator'
 import orderFormatter from './order/formatter'
 import txFormatter from './transation/tx'

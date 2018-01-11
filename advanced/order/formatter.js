@@ -1,4 +1,5 @@
 import utils from '../utils'
+import auth from '../auth'
 import {rawOrder,signedOrder,orderInput} from './types'
 
 export default class orderFormatter {
@@ -13,17 +14,19 @@ export default class orderFormatter {
   }
   setBasic(){
     let {
-      tokenS,
-      tokenB,
+      tokensName,
+      tokenbName,
       quantity,
       price,
     }= this.input
-    this.order.protocol = utils.getContractAddress()
-    this.order.owner = utils.getWalletAddress() // TODO Auth Module
-    this.order.tokenS = tokenS.address
-    this.order.tokenB = tokenB.address
-    this.order.amountS = utils.getTotalAmount(quantity,price,tokenS.digits) // TODO
-    this.order.amountB = utils.getAmount(quantity,tokenB.digits)
+    this.tokenS = utils.getTokenByName(tokensName)
+    this.tokenB = utils.getTokenByName(tokenbName)
+    this.order.protocol = utils.getContractAddress() // TODO Config Module
+    this.order.owner = auth.getWalletAddress() // TODO Auth Module
+    this.order.tokenS = this.tokenS.address
+    this.order.tokenB = this.tokenB.address
+    this.order.amountS = utils.getTotalAmount(quantity,price,this.tokenS.digits)
+    this.order.amountB = utils.getAmount(quantity,this.tokenB.digits)
     this.order.timestamp = Number((new Date().getTime() / 1000).toFixed(0))
     this.order.salt = Math.round(Math.random() * 1e8)
     this.order.buyNoMoreThanAmountB = false
@@ -45,12 +48,11 @@ export default class orderFormatter {
   }
   setLrcFee(){
     const amountS = this.order.amountS
-    const tokenS = utils.getTokenByAddress(this.order.tokenS) // TODO Token module
-    const lrcFeePercentage = utils.getConfig('lrcFeePercentage') || 2
     const lrcBalance = utils.getBalanceByTokenName('LRC') // TODO Token module
+    const lrcFeePercentage = utils.getConfig('lrcFeePercentage') || 2
     let lrcFee = amountS * lrcFeePercentage / 1000
 
-    if(tokenS.name == 'LRC'){
+    if(this.tokenS.name == 'LRC'){
       const isLrcFeeEnough = lrcFee+amountS <= lrcBalance
     }else{
       const isLrcFeeEnough = lrcFee <= lrcBalance
