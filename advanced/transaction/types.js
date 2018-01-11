@@ -1,30 +1,28 @@
-
 const approveTxInput = {
-  // token,
-  // amount,
+  token:'',
+  amount:'',
 }
 const approveCancelTxInput = {
-	// token,
-	// amount,
+	token:'',
+	amount:'',
 }
-
 const transferTxInput = {
-	// address,
-	// gasLimit,
-	// amount,
-	// token,
-	// data,
+	address:'',
+	gasLimit:'',
+	amount:'',
+	token:'',
+	data:'',
 }
 const convertTxInput = {
-	// fromToken,
-	// gasLimit,
-	// amount,
+  fromToken:'',
+  gasLimit:'',
+  amount:'',
 }
 const cancelOrderInput = {
-	// signedOrder
+  signedOrde:''r
 }
 const cancelAllOrdersInput = {
-	// empty object
+  empty objec:''t
 }
 
 export const txInput = approveTxInput || approveCancelTxInput || transferTxInput || convertTxInput || cancelOrderInput || cancelAllOrdersInput

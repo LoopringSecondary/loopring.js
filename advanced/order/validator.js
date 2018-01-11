@@ -1,6 +1,6 @@
-import * as apis from '../../2.0/common/apis'
-import Auth from './auth'
-import utils from './utils'
+import * as apis from '../src/common/apis'
+import Auth from '../auth'
+import utils from '../utils'
 
 export default class OrderValidator {
   constructor(rawOrder) { 
@@ -25,12 +25,10 @@ export default class OrderValidator {
     const amountS = this.order.amountS
     const lrcFee = this.order.lrcFee
     this.getAmountAllocated() // TODO
-    const amountAllocated = this.amountAllocated // TODO
-
     if(tokenS.name==='LRC'){
-      this.amountToPay = utils.toBigNumber(amountS).plus(lrcFee).plus(amountAllocated) 
+      this.amountToPay = utils.toBigNumber(amountS).plus(lrcFee).plus(this.amountAllocated) 
     }else{
-      this.amountToPay = utils.toBigNumber(amountS).plus(amountAllocated) 
+      this.amountToPay = utils.toBigNumber(amountS).plus(this.amountAllocated) 
     }
   }
   setAmountToApprove(){
@@ -54,10 +52,10 @@ export default class OrderValidator {
     const tokenS = this.tokenS
     const amountS = this.amountS
     if(tokenS.name === 'WETH'){
-      const wethBalance = tokenS.balance // TODO
-      const ethBalance = utils.getBalanceByTokenName('ETH') // TODO
+      const wethBalance = tokenS.balance // TODO token module
+      const ethBalance = utils.getBalanceByTokenName('ETH') // TODO token Module
       if(wethBalance < amountS < wethBalance + ethBalance){
-        this.amountToConvert = amountS-tokenS.balance // TODO
+        this.amountToConvert = amountS-tokenS.balance // token module
         return false
       }else{
         return true
@@ -68,10 +66,10 @@ export default class OrderValidator {
     }
   }
   isTokenSAllowanceEnough(){
-    return this.amountToPay <= this.tokenS.allowance // TODO
+    return this.amountToPay <= this.tokenS.allowance // TODO token module
   }
   isLrcAllowanceEnough(){
-    const lrcAllowance = utils.getAllowanceByTokenName('LRC') //TODO
+    const lrcAllowance = utils.getAllowanceByTokenName('LRC') //TODO token module
     return this.order.lrcFee <= lrcAllowance
   }
 }

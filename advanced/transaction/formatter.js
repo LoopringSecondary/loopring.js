@@ -6,9 +6,7 @@ import utils from './utils'
 import {txType,txInput,rawTx} from './types'
 
 export default class txFormatter {
-
   constructor(txType,txInput) {
-    
   	this.type = txType
   	this.input = txInput
   	this.raw = {}
@@ -20,7 +18,6 @@ export default class txFormatter {
     this.setValue()
     this.setChainId()
 		this.setData()
-
   }
   setToken(){
   	if(this.type === 'convert'){
@@ -122,6 +119,17 @@ export default class txFormatter {
   send(){
     return this.ethTx.send(signed)
   }
+  // isBalanceEnough(rawTx,token){
+  //   const token = this.token
+  //   const rawTx = this.raw
+  //   const balance = utils.getBalanceOfToken(token) // TODO token module
+  //   if(token.name==='ETH'){
+  //     const required = Number(rawTx.value) + Number(rawTx.gasLimit) * Number(rawTx.gasPrice);
+  //   }else{
+  //     const required = Number(rawTx.gasLimit) * Number(rawTx.gasPrice);
+  //   }
+  //   return required <= balance
+  // }
 }
 
 

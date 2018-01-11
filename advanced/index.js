@@ -1,55 +1,66 @@
 // require('babel-polyfill')
-import * as apis from '../../2.0/common/apis'
-import * as abis from '../../2.0/common/abis'
-import Transaction from '../../2.0/transaction'
-import Order from '../../2.0/order'
-import Loopring from '../../2.0/loopring'
-import orderValidator from './orderValidator'
-import orderFormatter from './orderFormatter'
-import txFormatter from './txFormatter'
-import txValidator from './txValidator'
+import * as apis from '../src/common/apis'
+import * as abis from '../src/common/abis'
+import Transaction from '../src/transaction'
+import Order from '../src/order'
+import Loopring from '../src/loopring'
+import orderValidator from './order/validator'
+import orderFormatter from './order/formatter'
+import txFormatter from './transation/tx'
+import txsFormatter from './transation/txs'
 
 function transfer(transferTxInput){
   const tx = new txFormatter('transfer',transferTxInput)
-  const validator = new txValidator([tx])
-  if(validator.isEThGasEnough()){
-    validator.sign()
-    validaor.send()
-  }else{
-    // do something like notification
+  const txs = new txsFormatter([tx])
+  if(txs.isEThGasEnough()){
+    txs.sign() // TODO
+    txs.send() // TODO
   }
 }
 
 function convert(convertTxInput){
   const tx = new txFormatter('convert',convertTxInput)
-  const validator = new txValidator([tx])
+  const txs = new txsFormatter([tx])
+  if(txs.isEThGasEnough()){
+    txs.sign()
+    txs.send()
+  }
 }
 
 function approve(approveTxInput){
   const tx = new txFormatter('approve',approveTxInput)
-  const validator = new txValidator([tx])
+  const txs = new txsFormatter([tx])
+  if(txs.isEThGasEnough()){
+    txs.sign()
+    txs.send()
+  }
 }
-
-const signedOrder = {}
-const rawOrder = {}
-const cancelOrderInput =  rawOrder || signedOrder // TODO
 
 function cancelOrder(cancelOrderInput){
   const order = new Order(cancelOrderInput)
   const signedOrder = order.sign()
   const tx = new txFormatter('cancelOrder',signedOrder)
-  const validator = new txValidator([tx]) // TODO
+  const txs = new txsFormatter([tx])
+  if(txs.isEThGasEnough()){
+    txs.sign()
+    txs.send()
+  }
 }
 
 function cancelAllOrders(){
   const tx = new txFormatter('cancelAllOrders')
-  const validator = new txValidator([tx])
+  const txs = new txsFormatter([tx])
+  if(txs.isEThGasEnough()){
+    txs.sign()
+    txs.send()
+  }
 }
 
 function trade(orderInput){
   let rawOrder = orderFormatter(orderInput)
   let validator = new orderValidator(rawOrder)
-  let txs = []
+  let order = new Order(rawOrder)
+  const txs = new txsFormatter()
   if(validator.isTokenSBalanceEnough()){  
       let  txInput = {
         amount:validator.amountToConvert, 
@@ -74,12 +85,10 @@ function trade(orderInput){
       const lrcApproveTx = new txFormatter('approve',txInput)
       txs.push(lrcApproveTx)
   }
-  const txValidator = new txValidator(txs)
-  if(!txValidator.isEthGasEnough()){
-    txValidator.sign() // TODO
-    txValidator.send() // TODO
-    let order = new Order(rawOrder)
-    order.sign() // TODO
+  if(!txs.isEthGasEnough()){
+    txs.sign()
+    txs.send()
+    order.sign() //TODO
     order.submit() //TODO
   }
 }

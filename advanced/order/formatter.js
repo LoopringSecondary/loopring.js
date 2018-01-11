@@ -1,4 +1,4 @@
-import utils from './utils'
+import utils from '../utils'
 import {rawOrder,signedOrder,orderInput} from './types'
 
 export default class orderFormatter {
@@ -19,7 +19,7 @@ export default class orderFormatter {
       price,
     }= this.input
     this.order.protocol = utils.getContractAddress()
-    this.order.owner = utils.getWalletAddress()
+    this.order.owner = utils.getWalletAddress() // TODO Auth Module
     this.order.tokenS = tokenS.address
     this.order.tokenB = tokenB.address
     this.order.amountS = utils.getTotalAmount(quantity,price,tokenS.digits) // TODO
@@ -45,9 +45,9 @@ export default class orderFormatter {
   }
   setLrcFee(){
     const amountS = this.order.amountS
-    const tokenS = utils.getTokenByAddress(this.order.tokenS)
+    const tokenS = utils.getTokenByAddress(this.order.tokenS) // TODO Token module
     const lrcFeePercentage = utils.getConfig('lrcFeePercentage') || 2
-    const lrcBalance = utils.getBalanceByTokenName('LRC')
+    const lrcBalance = utils.getBalanceByTokenName('LRC') // TODO Token module
     let lrcFee = amountS * lrcFeePercentage / 1000
 
     if(tokenS.name == 'LRC'){

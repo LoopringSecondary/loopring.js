@@ -1,12 +1,16 @@
-import * as apis from '../../2.0/common/apis'
-import * as abis from '../../2.0/common/abis'
-import Transaction from '../..//transactioni'
+import * as apis from '../../src/common/apis'
+import * as abis from '../../src/common/abis'
+import Transaction from '../../src/transaction'
+import utils from '../utils'
 
 export default class Txs {
   constructor(txs) {
     this.txs=txs
     this.uiTxs=[]
     this.setUI()
+  }
+  push(tx){
+    this.txs.push(tx)
   }
   setUI(){
     this.txs.forEach(tx=>{
