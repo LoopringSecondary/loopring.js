@@ -21,7 +21,7 @@ const Path = require('path');
 
 module.exports = {
     devtool: 'inline-source-map',
-    entry: './2.0/index.js',
+    entry: './src/index.js',
     resolve: {
         modules: [
             'bower_components',
