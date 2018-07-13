@@ -847,7 +847,7 @@ const fileName = getFileName(address);
 ##### 样例代码
 
 ```javascript
-const response = await connect()；
+const response = await connect();
 if(!response.error){
     const ledger = response.result
 }
