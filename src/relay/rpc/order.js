@@ -1,9 +1,9 @@
-import request, {id} from '../../common/request';
+import request, { id } from '../../common/request';
 import Response from '../../common/response';
 import code from '../../common/code';
-import {soliditySHA3, solidityPack} from 'ethereumjs-abi';
+import { soliditySHA3, solidityPack } from 'ethereumjs-abi';
 import validator from '../validator';
-import {toBN} from '../../common/formatter';
+import { toBN } from '../../common/formatter';
 
 export default class Order
 {
@@ -81,13 +81,17 @@ export function getOrders (host, filter)
         validator.validate({value: filter.delegateAddress, type: 'ETH_ADDRESS'});
         validator.validate({value: filter.pageIndex, type: 'OPTION_NUMBER'});
         filter.market && validator.validate({value: filter.market, type: 'STRING'});
-        filter.owner && validator.validate({value: filter.owner, type: 'ETH_ADDRESS'});
-        filter.orderHash && validator.validate({value: filter.orderHash, type: 'STRING'});
-        filter.pageSize && validator.validate({value: filter.pageSize, type: 'OPTION_NUMBER'});
+        filter.owner &&
+    validator.validate({value: filter.owner, type: 'ETH_ADDRESS'});
+        filter.orderHash &&
+    validator.validate({value: filter.orderHash, type: 'STRING'});
+        filter.pageSize &&
+    validator.validate({value: filter.pageSize, type: 'OPTION_NUMBER'});
     }
     catch (e)
     {
-        return Promise.resolve(new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
+        return Promise.resolve(
+            new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
     }
     const body = {};
     body.method = 'loopring_getOrders';
@@ -118,7 +122,8 @@ export function getCutoff (host, filter)
     }
     catch (e)
     {
-        return Promise.resolve(new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
+        return Promise.resolve(
+            new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
     }
     const body = {};
     body.method = 'loopring_getCutoff';
@@ -147,7 +152,8 @@ export function placeOrder (host, order)
     }
     catch (e)
     {
-        return Promise.resolve(new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
+        return Promise.resolve(
+            new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
     }
     const body = {};
     body.method = 'loopring_submitOrder';
@@ -175,34 +181,46 @@ export function getOrderHash (order)
         return new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg);
     }
     const orderTypes = [
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
         'address',
         'address',
         'address',
         'address',
         'address',
         'address',
-        'uint',
-        'uint',
-        'uint',
-        'uint',
-        'uint',
-        'bool',
-        'uint8'
+        'address',
+        'address',
+        'address',
+        'uint16',
+        'uint16',
+        'uint16',
+        'uint16',
+        'bool'
     ];
     const orderData = [
-        order.delegateAddress,
+        toBN(order.amountS),
+        toBN(order.amountB),
+        toBN(order.feeAmount),
+        order.validSince ? this.toBN(order.validSince) : this.toBN(0),
+        order.validUntil ? this.toBN(order.validUntil) : this.toBN(0),
         order.owner,
         order.tokenS,
         order.tokenB,
-        order.walletAddress,
-        order.authAddr,
-        toBN(order.amountS),
-        toBN(order.amountB),
-        toBN(order.validSince),
-        toBN(order.validUntil),
-        toBN(order.lrcFee),
-        order.buyNoMoreThanAmountB,
-        order.marginSplitPercentage
+        order.dualAuthAddr || '0x0',
+        order.broker || '0x0',
+        order.orderInterceptor || '0x0',
+        order.walletAddr || '0x0',
+        order.tokenRecipient || order.owner,
+        order.feeToken,
+        order.walletSplitPercentage,
+        toBN(order.feePercentage),
+        toBN(order.tokenSFeePercentage),
+        toBN(order.tokenBFeePercentage),
+        order.allOrNone
     ];
     return soliditySHA3(orderTypes, orderData);
 }
@@ -218,34 +236,46 @@ export function packOrder (order)
         return new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg);
     }
     const orderTypes = [
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
+        'uint256',
         'address',
         'address',
         'address',
         'address',
         'address',
         'address',
-        'uint',
-        'uint',
-        'uint',
-        'uint',
-        'uint',
-        'bool',
-        'uint8'
+        'address',
+        'address',
+        'address',
+        'uint16',
+        'uint16',
+        'uint16',
+        'uint16',
+        'bool'
     ];
     const orderData = [
-        order.delegateAddress,
+        toBN(order.amountS),
+        toBN(order.amountB),
+        toBN(order.feeAmount),
+        order.validSince ? this.toBN(order.validSince) : this.toBN(0),
+        order.validUntil ? this.toBN(order.validUntil) : this.toBN(0),
         order.owner,
         order.tokenS,
         order.tokenB,
-        order.walletAddress,
-        order.authAddr,
-        toBN(order.amountS),
-        toBN(order.amountB),
-        toBN(order.validSince),
-        toBN(order.validUntil),
-        toBN(order.lrcFee),
-        order.buyNoMoreThanAmountB,
-        order.marginSplitPercentage
+        order.dualAuthAddr || '0x0',
+        order.broker || '0x0',
+        order.orderInterceptor || '0x0',
+        order.walletAddr || '0x0',
+        order.tokenRecipient || order.owner,
+        order.feeToken,
+        order.walletSplitPercentage,
+        toBN(order.feePercentage),
+        toBN(order.tokenSFeePercentage),
+        toBN(order.tokenBFeePercentage),
+        order.allOrNone
     ];
 
     return solidityPack(orderTypes, orderData);
@@ -267,7 +297,8 @@ export function setTempStore (host, key, value)
     }
     catch (e)
     {
-        return Promise.resolve(new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
+        return Promise.resolve(
+            new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
     }
     const body = {};
     body.method = 'loopring_setTempStore';
@@ -304,7 +335,8 @@ export function getTempStore (host, filter)
  * @param type
  * @returns {*}
  */
-export function cancelOrder (host, {sign, orderHash, tokenS, tokenB, cutoff, type})
+export function cancelOrder (
+    host, {sign, orderHash, tokenS, tokenB, cutoff, type})
 {
     const {owner, r, s, v} = sign;
     try
@@ -342,7 +374,8 @@ export function cancelOrder (host, {sign, orderHash, tokenS, tokenB, cutoff, typ
     }
     catch (e)
     {
-        return Promise.resolve(new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
+        return Promise.resolve(
+            new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg));
     }
 }
 
@@ -373,6 +406,7 @@ export function getOrderByHash (host, filter)
         body
     });
 }
+
 export function getContracts (host)
 {
     const body = {};

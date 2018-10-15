@@ -6,29 +6,14 @@ import {ecsign, hashPersonalMessage} from 'ethereumjs-util';
 const erc20Abi = require('../../config/abis/erc20.json');
 const wethAbi = require('../../config/abis/weth.json');
 const airdropAbi = require('../../config/abis/airdrop.json');
-const loopringProtocolAbi = require('../../config/abis/loopringProtocol.json');
+const ringAbi = require('../../config/abis/ring.json');
+const orderAbi = require('../../config/abis/order.json');
 
 const ERC20Token = new Contract(erc20Abi);
 const WETH = new Contract(wethAbi);
 const AirdropContract = new Contract(airdropAbi);
-const LoopringProtocol = new Contract(loopringProtocolAbi);
-
-const encodeCancelOrder = (signedOrder, amount) =>
-{
-    const {
-        owner, tokenS, tokenB, walletAddress, authAddr,
-        amountS, amountB, validSince, validUntil, lrcFee,
-        buyNoMoreThanAmountB,
-        marginSplitPercentage,
-        v,
-        r,
-        s
-    } = signedOrder;
-    const addresses = [owner, tokenS, tokenB, walletAddress, authAddr];
-    amount = amount || (buyNoMoreThanAmountB ? amountB : amountS);
-    const orderValues = [amountS, amountB, validSince, validUntil, lrcFee, amount];
-    return LoopringProtocol.encodeInputs('cancelOrder', {addresses, orderValues, buyNoMoreThanAmountB, marginSplitPercentage, v, r, s});
-};
+const Ring = new Contract(ringAbi);
+const Order = new Contract(orderAbi);
 
 const encodeSubmitRing = (orders, feeRecipient, feeSelections) =>
 {
@@ -63,7 +48,7 @@ const encodeSubmitRing = (orders, feeRecipient, feeSelections) =>
     const sList = orders.map(order => order.s);
     sList.push(...sigs.map(sig => sig.s));
 
-    return LoopringProtocol.encodeInputs('submitRing', {
+    return Ring.encodeInputs('submitRing', {
         addressList,
         uintArgsList,
         uint8ArgsList,
@@ -76,11 +61,12 @@ const encodeSubmitRing = (orders, feeRecipient, feeSelections) =>
     });
 };
 
-Object.assign(LoopringProtocol, {encodeCancelOrder, encodeSubmitRing});
+Object.assign(Ring, {encodeSubmitRing});
 
 export default {
     ERC20Token,
     WETH,
     AirdropContract,
-    LoopringProtocol
+    Order,
+    Ring
 };

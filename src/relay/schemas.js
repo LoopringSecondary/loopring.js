@@ -31,11 +31,20 @@ const loopringScheams = {
         type: 'object',
         required: true,
         fields: {
-            delegateAddress: {
-                ...basicSchemas.ETH_ADDRESS
+            amountS: {
+                ...basicSchemas.ETH_VALUES
             },
-            protocol: {
-                ...basicSchemas.ETH_ADDRESS
+            amountB: {
+                ...basicSchemas.ETH_VALUES
+            },
+            feeAmount: {
+                ...basicSchemas.ETH_VALUES
+            },
+            validSince: {
+                ...basicSchemas.ETH_VALUES
+            },
+            validUntil: {
+                ...basicSchemas.ETH_VALUES
             },
             owner: {
                 ...basicSchemas.ETH_ADDRESS
@@ -46,6 +55,9 @@ const loopringScheams = {
             tokenB: {
                 ...basicSchemas.ETH_ADDRESS
             },
+            feeToken: {
+                ...basicSchemas.ETH_ADDRESS
+            },
             authAddr: {
                 ...basicSchemas.ETH_ADDRESS
             },
@@ -53,33 +65,36 @@ const loopringScheams = {
                 ...basicSchemas.ETH_KEY,
                 required: false
             },
-            validSince: {
-                ...basicSchemas.ETH_VALUES
-            },
-            validUntil: {
-                ...basicSchemas.ETH_VALUES
-            },
-            amountS: {
-                ...basicSchemas.ETH_VALUES
-            },
-            amountB: {
-                ...basicSchemas.ETH_VALUES
-            },
-            lrcFee: {
-                ...basicSchemas.ETH_VALUES
-            },
             walletAddress: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            buyNoMoreThanAmountB: {
-                type: 'boolean',
-                required: true
-            },
-            marginSplitPercentage: {
+            tokenSFeePercentage: {
                 type: 'integer',
                 required: true,
                 minimum: 0,
-                maximum: 100
+                maximum: 1000
+            },
+            tokenBFeePercentage: {
+                type: 'integer',
+                required: true,
+                minimum: 0,
+                maximum: 1000
+            },
+            feePercentage: {
+                type: 'integer',
+                required: true,
+                minimum: 0,
+                maximum: 1000
+            },
+            walletSplitPercentage: {
+                type: 'integer',
+                required: true,
+                minimum: 0,
+                maximum: 1000
+            },
+            allOrNone: {
+                type: 'boolean',
+                required: true
             }
         }
     },
