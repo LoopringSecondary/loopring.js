@@ -160,16 +160,6 @@ export function getFills (host, filter)
     });
 }
 
-export function getRingHash (orders, feeRecipient, feeSelections)
-{
-    const orderHashList = orders.map(order => getOrderHash(order));
-    return soliditySHA3(['string', 'address', 'uint16'], [
-        xorReduceStr(orderHashList),
-        feeRecipient,
-        feeSelectionListToNumber(feeSelections)
-    ]);
-}
-
 export function submitRingForP2P (host, filter)
 {
     const {takerOrderHash, makerOrderHash} = filter;
@@ -184,34 +174,4 @@ export function submitRingForP2P (host, filter)
         method: 'post',
         body
     });
-}
-
-function xorReduceStr (strArr)
-{
-    const s0 = strArr[0];
-    const tail = strArr.slice(1);
-    const strXor = (s1, s2) =>
-    {
-        const buf1 = Buffer.from(s1.slice(2), 'hex');
-        const buf2 = Buffer.from(s2.slice(2), 'hex');
-        const res = Buffer.alloc(32);
-        for (let i = 0; i < 32; i++)
-        {
-            res[i] = buf1[i] ^ buf2[i];
-        }
-        return toHex(res);
-    };
-    const reduceRes = tail.reduce((a, b) => strXor(a, b), s0);
-    return Buffer.from(reduceRes.slice(2), 'hex');
-}
-
-export function feeSelectionListToNumber (feeSelections)
-{
-    let res = 0;
-    for (let i = 0; i < feeSelections.length; i++)
-    {
-        res += feeSelections[i] << i;
-    }
-
-    return res;
 }

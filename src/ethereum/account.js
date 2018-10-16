@@ -326,8 +326,9 @@ export class KeyAccount extends Account
         const v = toNumber(signature.v);
         const r = toHex(signature.r);
         const s = toHex(signature.s);
+        const sig = r + clearHexPrefix(s) + clearHexPrefix(toHex(v));
         return {
-            ...order, v, r, s
+            ...order, sig
         };
     }
 }
@@ -434,13 +435,15 @@ export class LedgerAccount extends Account
         const hash = getOrderHash(order);
         const result = await Ledger.signMessage(this.dpath,
             clearHexPrefix(toHex(hash)), this.ledger);
+        const sig = addHexPrefix(result.r) + result.s + clearHexPrefix(toHex(result.v));
+
         if (result.error)
         {
             throw new Error(result.error.message);
         }
         else
         {
-            return {...order, ...result.result};
+            return {...order, sig};
         }
     }
 }
@@ -508,9 +511,10 @@ export class MetaMaskAccount extends Account
     {
         const hash = toHex(hashPersonalMessage(getOrderHash(order)));
         const result = await MetaMask.sign(this.web3, this.account, hash);
+        const sig = addHexPrefix(result.r) + result.s + clearHexPrefix(toHex(result.v));
         if (!result.error)
         {
-            return {...order, ...result.result};
+            return {...order, sig};
         }
         else
         {

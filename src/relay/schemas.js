@@ -49,6 +49,11 @@ const loopringScheams = {
             owner: {
                 ...basicSchemas.ETH_ADDRESS
             },
+            broker: {
+                type: 'string',
+                required: false,
+                pattern: /^0x[0-9a-fA-F]{40}$/g
+            },
             tokenS: {
                 ...basicSchemas.ETH_ADDRESS
             },
@@ -102,19 +107,36 @@ const loopringScheams = {
         type: 'object',
         required: true,
         fields: {
-            delegateAddress: {
-                ...basicSchemas.ETH_ADDRESS
+            amountS: {
+                ...basicSchemas.ETH_VALUES
             },
-            protocol: {
-                ...basicSchemas.ETH_ADDRESS
+            amountB: {
+                ...basicSchemas.ETH_VALUES
+            },
+            feeAmount: {
+                ...basicSchemas.ETH_VALUES
+            },
+            validSince: {
+                ...basicSchemas.ETH_VALUES
+            },
+            validUntil: {
+                ...basicSchemas.ETH_VALUES
             },
             owner: {
                 ...basicSchemas.ETH_ADDRESS
+            },
+            broker: {
+                type: 'string',
+                required: false,
+                pattern: /^0x[0-9a-fA-F]{40}$/g
             },
             tokenS: {
                 ...basicSchemas.ETH_ADDRESS
             },
             tokenB: {
+                ...basicSchemas.ETH_ADDRESS
+            },
+            feeToken: {
                 ...basicSchemas.ETH_ADDRESS
             },
             authAddr: {
@@ -124,48 +146,44 @@ const loopringScheams = {
                 ...basicSchemas.ETH_KEY,
                 required: false
             },
-            validSince: {
-                ...basicSchemas.ETH_VALUES
-            },
-            validUntil: {
-                ...basicSchemas.ETH_VALUES
-            },
-            amountS: {
-                ...basicSchemas.ETH_VALUES
-            },
-            amountB: {
-                ...basicSchemas.ETH_VALUES
-            },
-            lrcFee: {
-                ...basicSchemas.ETH_VALUES
-            },
             walletAddress: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            buyNoMoreThanAmountB: {
-                type: 'boolean',
-                required: true
-            },
-            marginSplitPercentage: {
+            tokenSFeePercentage: {
                 type: 'integer',
                 required: true,
                 minimum: 0,
-                maximum: 100
+                maximum: 1000
             },
-            v: {
+            tokenBFeePercentage: {
                 type: 'integer',
                 required: true,
-                minimum: 0
+                minimum: 0,
+                maximum: 1000
             },
-            s: {
-                'type': 'string',
+            feePercentage: {
+                type: 'integer',
                 required: true,
-                pattern: /^0x[0-9a-fA-F]{64}$/g
+                minimum: 0,
+                maximum: 1000
             },
-            r: {
-                'type': 'string',
+            walletSplitPercentage: {
+                type: 'integer',
                 required: true,
-                pattern: /^0x[0-9a-fA-F]{64}$/g
+                minimum: 0,
+                maximum: 1000
+            },
+            allOrNone: {
+                type: 'boolean',
+                required: true
+            },
+            sig: {
+                ...basicSchemas.HEX
+            },
+            authSig: {
+                type: 'string',
+                required: false,
+                pattern: /^0x[0-9a-fA-F]+$/g
             }
         }
     },
