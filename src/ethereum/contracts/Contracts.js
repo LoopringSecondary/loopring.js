@@ -1,16 +1,14 @@
 import Contract from './Contract';
 import {
     addHexPrefix,
-    toBig,
-    toBuffer,
-    toFixed,
-    toHex,
     clearHexPrefix,
-    toBN
+    toBN,
+    toBuffer,
+    toHex
 } from '../../common/formatter';
-import {ecsign, hashPersonalMessage} from 'ethereumjs-util';
+import { ecsign } from 'ethereumjs-util';
 import BitStream from '../../common/BitStream';
-import {soliditySHA3} from 'ethereumjs-abi';
+import { soliditySHA3 } from 'ethereumjs-abi';
 
 const erc20Abi = require('../../config/abis/erc20.json');
 const wethAbi = require('../../config/abis/weth.json');
