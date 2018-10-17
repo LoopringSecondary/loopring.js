@@ -435,7 +435,7 @@ export class LedgerAccount extends Account
         const hash = getOrderHash(order);
         const result = await Ledger.signMessage(this.dpath,
             clearHexPrefix(toHex(hash)), this.ledger);
-        const sig = addHexPrefix(result.r) + result.s + clearHexPrefix(toHex(result.v));
+        const sig = result.r + clearHexPrefix(result.s) + clearHexPrefix(toHex(result.v));
 
         if (result.error)
         {
@@ -511,7 +511,7 @@ export class MetaMaskAccount extends Account
     {
         const hash = toHex(hashPersonalMessage(getOrderHash(order)));
         const result = await MetaMask.sign(this.web3, this.account, hash);
-        const sig = addHexPrefix(result.r) + result.s + clearHexPrefix(toHex(result.v));
+        const sig = result.r + clearHexPrefix(result.s) + clearHexPrefix(toHex(result.v));
         if (!result.error)
         {
             return {...order, sig};
