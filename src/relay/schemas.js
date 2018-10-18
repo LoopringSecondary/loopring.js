@@ -49,6 +49,10 @@ const loopringScheams = {
             owner: {
                 ...basicSchemas.ETH_ADDRESS
             },
+            tokenRecipient: {
+                ...basicSchemas.ETH_ADDRESS,
+                required: false
+            },
             broker: {
                 type: 'string',
                 required: false,
@@ -63,14 +67,18 @@ const loopringScheams = {
             feeToken: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            authAddr: {
+            dualAuthAddr: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            authPrivateKey: {
+            dualAuthPrivateKey: {
                 ...basicSchemas.ETH_KEY,
                 required: false
             },
-            walletAddress: {
+            orderInterceptor: {
+                ...basicSchemas,
+                required: false
+            },
+            wallet: {
                 ...basicSchemas.ETH_ADDRESS
             },
             tokenSFeePercentage: {
@@ -125,6 +133,10 @@ const loopringScheams = {
             owner: {
                 ...basicSchemas.ETH_ADDRESS
             },
+            tokenRecipient: {
+                ...basicSchemas.ETH_ADDRESS,
+                required: false
+            },
             broker: {
                 type: 'string',
                 required: false,
@@ -139,14 +151,18 @@ const loopringScheams = {
             feeToken: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            authAddr: {
+            dualAuthAddr: {
                 ...basicSchemas.ETH_ADDRESS
             },
-            authPrivateKey: {
+            dualAuthPrivateKey: {
                 ...basicSchemas.ETH_KEY,
                 required: false
             },
-            walletAddress: {
+            orderInterceptor: {
+                ...basicSchemas,
+                required: false
+            },
+            wallet: {
                 ...basicSchemas.ETH_ADDRESS
             },
             tokenSFeePercentage: {
@@ -181,9 +197,8 @@ const loopringScheams = {
                 ...basicSchemas.HEX
             },
             authSig: {
-                type: 'string',
-                required: false,
-                pattern: /^0x[0-9a-fA-F]+$/g
+                ...basicSchemas.HEX,
+                required: false
             }
         }
     },

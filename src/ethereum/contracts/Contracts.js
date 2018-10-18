@@ -146,9 +146,9 @@ function createOrderTable (order, param)
     param.tables.addNumber(order.tokenSpendableS.index, 2);
     param.tables.addNumber(order.tokenSpendableFee.index, 2);
 
-    if (order.authAddr)
+    if (order.dualAuthAddr)
     {
-        insertOffset(param, param.data.addAddress(order.authAddr, 20, false));
+        insertOffset(param, param.data.addAddress(order.dualAuthAddr, 20, false));
     }
     else
     {
@@ -173,9 +173,9 @@ function createOrderTable (order, param)
         insertDefault(param);
     }
 
-    if (order.walletAddress)
+    if (order.wallet)
     {
-        insertOffset(param, param.data.addAddress(order.walletAddress, 20, false));
+        insertOffset(param, param.data.addAddress(order.wallet, 20, false));
     }
     else
     {

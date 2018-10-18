@@ -1,9 +1,9 @@
 import request, { id } from '../../common/request';
 import Response from '../../common/response';
 import code from '../../common/code';
-import { soliditySHA3, solidityPack } from 'ethereumjs-abi';
 import validator from '../validator';
-import { toBN } from '../../common/formatter';
+import { TypedDataUtils } from 'eth-sig-util';
+import { sha3 } from 'ethereumjs-util';
 
 export default class Order
 {
@@ -67,6 +67,41 @@ export default class Order
         return getContracts(this.host);
     }
 }
+
+export const typedOrderHeader = {
+    types: {
+        EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' }
+        ],
+        Order: [
+            { name: 'owner', type: 'address' },
+            { name: 'tokenS', type: 'address' },
+            { name: 'tokenB', type: 'address' },
+            { name: 'amountS', type: 'unit' },
+            { name: 'amountB', type: 'unit' },
+            { name: 'dualAuthAddr', type: 'address' },
+            { name: 'broker', type: 'address' },
+            { name: 'orderInterceptor', type: 'address' },
+            { name: 'wallet', type: 'address' },
+            { name: 'validSince', type: 'uint' },
+            { name: 'validUntil', type: 'unit' },
+            { name: 'allOrNone', type: 'bool' },
+            { name: 'tokenRecipient', type: 'address' },
+            { name: 'walletSplitPercentage', type: 'uint16' },
+            { name: 'feeToken', type: 'address' },
+            { name: 'feeAmount', type: 'uint' },
+            { name: 'feePercentage', type: 'uint16' },
+            { name: 'tokenSFeePercentage', type: 'uint16' },
+            { name: 'tokenBFeePercentage', type: 'uint16' }
+        ]
+    },
+    primaryType: 'Order',
+    domain: {
+        name: 'Loopring Protocol',
+        version: '2'
+    }
+};
 
 /**
  * @description Get loopring order list.
@@ -167,62 +202,13 @@ export function placeOrder (host, order)
 }
 
 /**
- * @description Returns the order Hash of given order
+ * @description Returns the order ERC712 Hash of given order
  * @param order
  */
 export function getOrderHash (order)
 {
-    try
-    {
-        validator.validate({value: order, type: 'RAW_Order'});
-    }
-    catch (e)
-    {
-        return new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg);
-    }
-    const orderTypes = [
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'uint16',
-        'uint16',
-        'uint16',
-        'uint16',
-        'bool'
-    ];
-    const orderData = [
-        toBN(order.amountS),
-        toBN(order.amountB),
-        toBN(order.feeAmount),
-        order.validSince ? this.toBN(order.validSince) : this.toBN(0),
-        order.validUntil ? this.toBN(order.validUntil) : this.toBN(0),
-        order.owner,
-        order.tokenS,
-        order.tokenB,
-        order.dualAuthAddr || '0x0',
-        order.broker || '0x0',
-        order.orderInterceptor || '0x0',
-        order.walletAddr || '0x0',
-        order.tokenRecipient || order.owner,
-        order.feeToken,
-        order.walletSplitPercentage,
-        toBN(order.feePercentage),
-        toBN(order.tokenSFeePercentage),
-        toBN(order.tokenBFeePercentage),
-        order.allOrNone
-    ];
-    return soliditySHA3(orderTypes, orderData);
+    const packedOrder = packOrder(order);
+    return sha3(packedOrder);
 }
 
 export function packOrder (order)
@@ -235,50 +221,18 @@ export function packOrder (order)
     {
         return new Response(code.PARAM_INVALID.code, code.PARAM_INVALID.msg);
     }
-    const orderTypes = [
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'uint256',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'address',
-        'uint16',
-        'uint16',
-        'uint16',
-        'uint16',
-        'bool'
-    ];
-    const orderData = [
-        toBN(order.amountS),
-        toBN(order.amountB),
-        toBN(order.feeAmount),
-        order.validSince ? this.toBN(order.validSince) : this.toBN(0),
-        order.validUntil ? this.toBN(order.validUntil) : this.toBN(0),
-        order.owner,
-        order.tokenS,
-        order.tokenB,
-        order.dualAuthAddr || '0x0',
-        order.broker || '0x0',
-        order.orderInterceptor || '0x0',
-        order.walletAddr || '0x0',
-        order.tokenRecipient || order.owner,
-        order.feeToken,
-        order.walletSplitPercentage,
-        toBN(order.feePercentage),
-        toBN(order.tokenSFeePercentage),
-        toBN(order.tokenBFeePercentage),
-        order.allOrNone
-    ];
 
-    return solidityPack(orderTypes, orderData);
+    order.dualAuthAddr = order.dualAuthAddr || '0x0';
+    order.broker = order.broker || '0x0';
+    order.orderInterceptor = order.orderInterceptor || '0x0';
+    order.wallet = order.wallet || '0x0';
+
+    const typedOrder = {...typedOrderHeader, message: order};
+    const sanitizedData = TypedDataUtils.sanitizeData(typedOrder);
+    const parts = [Buffer.from('1901', 'hex')];
+    parts.push(TypedDataUtils.hashStruct('EIP712Domain', sanitizedData.domain, sanitizedData.types));
+    parts.push(TypedDataUtils.hashStruct(sanitizedData.primaryType, sanitizedData.message, sanitizedData.types));
+    return Buffer.concat(parts);
 }
 
 /**
